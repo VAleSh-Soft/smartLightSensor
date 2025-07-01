@@ -11,10 +11,16 @@ void btnCheck(void *pvParameters)
     switch (btnMode.getButtonState())
     {
     case BTN_ONECLICK:
-      setCurrentMode(MODE_AUTO);
+      if (getCurrentMode() != MODE_AUTO)
+      {
+        setCurrentMode(MODE_AUTO);
+      }
       break;
     case BTN_LONGCLICK:
-      setCurrentMode(MODE_MANUAL);
+      if (getCurrentMode() != MODE_MANUAL)
+      {
+        setCurrentMode(MODE_MANUAL);
+      }
       break;
     case BTN_DBLCLICK:
       // здесь включение WiFi
