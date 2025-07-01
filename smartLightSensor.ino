@@ -57,20 +57,23 @@ void setLeds(void *pvParameters)
 
 void lightSensorCheck(void *pvParameters)
 {
+  uint16_t sensor_data;
+  uint16_t t = read_eeprom_16(EEPROM_INDEX_FOR_LIGHT_SENSOR_THRESHOLD);
+
   while (1)
   {
-    uint16_t sensor_data = getLightSensorData();
-    uint16_t t = read_eeprom_16(EEPROM_INDEX_FOR_LIGHT_SENSOR_THRESHOLD);
+    sensor_data = getLightSensorData();
 
     // тут же управление светом в автоматическом режиме
     if (getCurrentMode() == MODE_AUTO && getEngineRunFlag())
     {
+      t = read_eeprom_16(EEPROM_INDEX_FOR_LIGHT_SENSOR_THRESHOLD);
       if (sensor_data <= t)
       { // если уровень снизился до порога включения БС, то включить БС и остановить таймер отключения БС
         setRelayState(RELAY_LB, HIGH);
         // tasks.stopTask(turn_off_low_beam_timer);
       }
-      else if (sensor_data > t + 50)
+      else if (sensor_data > (t + LIGHT_SENSOR_THRESHOLD_HISTERESIS))
       { // если уровень превысил порог включения БС, реле БС включено, а таймер отключения БС еще не запущен, запустить его
         if (getRelayState(RELAY_LB) /*&& !tasks.getTaskState(turn_off_low_beam_timer)*/)
         {
@@ -82,11 +85,11 @@ void lightSensorCheck(void *pvParameters)
     // и здесь же управление яркостью светодиода - вне зависимость от режима работы
     if (sensor_data <= t)
     {
-      FastLED.setBrightness(50);
+      FastLED.setBrightness(MIN_LED_BRIGHTNESS);
     }
-    else if (sensor_data > t + 50)
+    else if (sensor_data > (t + LIGHT_SENSOR_THRESHOLD_HISTERESIS))
     {
-      FastLED.setBrightness(255);
+      FastLED.setBrightness(MAX_LED_BRIGHTNESS);
     }
 
     vTaskDelay(50);
