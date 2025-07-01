@@ -3,15 +3,15 @@
 #include <shButton.h>
 #include <FastLED.h>
 
-// ===================================================
+// ==== Настройки ====================================
 
 constexpr uint8_t LIGHT_SENSOR_PIN = 4; // пин датчика света
 constexpr uint8_t IGNITION_PIN = 5;     // пин, на который приходит сигнал с линии зажигания; при появлении на этом пине высокого уровня МК выходит из глубокого сна, поэтому для esp32c3 допустимые значения 0..5
 constexpr uint8_t ENGINE_RUN_PIN = 6;   // пин, на который приходит сигнал с вывода D генератора или HIGH при запущенном двигателе
 constexpr uint8_t BTN_MODE_PIN = 3;     // пин кнопки режима работы
 constexpr uint8_t LEDS_DATA_PIN = 7;    // пин выхода для светодиодов
-constexpr uint8_t RELAY_FOR_LB = 8;     // пин реле ближнего света
-constexpr uint8_t RELAY_FOR_PL = 9;     // пин реле габаритных огней
+constexpr uint8_t RELAY_FOR_LB_PIN = 8; // пин реле ближнего света
+constexpr uint8_t RELAY_FOR_PL_PIN = 9; // пин реле габаритных огней
 
 #define EEPROM_INDEX_FOR_LIGHT_SENSOR_THRESHOLD 1 // индекс для хранения порога включения ближнего света, uint16_t
 #define EEPROM_INDEX_FOR_CURRENT_MODE 3           // индекс для хранения текущего режима работы, uint8_t
@@ -22,27 +22,18 @@ constexpr uint8_t RELAY_FOR_PL = 9;     // пин реле габаритных 
 
 enum AutoLightMode : uint8_t
 {
-  MODE_OFF,
-  MODE_AUTO
+  MODE_MANUAL, // ручной режим
+  MODE_AUTO    // автоматический режим
 };
 
-// ===================================================
-
-class slsButton : public shButton
+enum RelayState : uint8_t
 {
-private:
-public:
-  slsButton(byte button_pin) : shButton(button_pin)
-  {
-    shButton::setVirtualClickOn(true);
-    shButton::setLongClickMode(LCM_ONLYONCE);
-    shButton::setTimeoutOfLongClick(1000);
-  }
+  RELAY_ALL, // все реле
+  RELAY_LB,  // реле ближнего света
+  RELAY_PL   // реле габаритных огней
 };
 
 // ===================================================
-
-slsButton btnMode(BTN_MODE_PIN); // кнопка режима работы
 
 const uint8_t LEDS_NUM = 1;
 
@@ -60,36 +51,17 @@ CRGB leds[LEDS_NUM]; // индикаторный светодиод;
                       *                                синий цвет;
                       */
 
-class SensorState
-{
-private:
-  uint8_t sensor_pin;
-  AutoLightMode cur_mode = MODE_OFF; // текущий режим работы
-  bool engine_run_flag = false;      // флаг запуска двигателя
-  uint16_t light_sensor_data;        // текущие показания датчика света
-
-public:
-  SensorState(uint8_t _sensor_pin)
-  {
-    sensor_pin = _sensor_pin;
-    // light_sensor_data = analogRead(sensor_pin);
-  }
-  void setCurrentMode(AutoLightMode _mode) { cur_mode = _mode; }
-  void setEngineRunFlag(bool _flag) { engine_run_flag = _flag; }
-  AutoLightMode getCurrentMode() { return cur_mode; }
-  bool getEngineRunFlag() { return engine_run_flag; }
-  uint16_t getLightSensorData()
-  {
-    light_sensor_data = (light_sensor_data * 3 + analogRead(LIGHT_SENSOR_PIN)) / 4;
-    return light_sensor_data;
-  }
-};
-
-SensorState sys_data(LIGHT_SENSOR_PIN);
-
 // ===================================================
 
-// void set_cur_mode(AutoLightMode _mode);
+void setCurrentMode(AutoLightMode _mode);
+AutoLightMode getCurrentMode();
+void setEngineRunFlag(bool _flag);
+bool getEngineRunFlag();
+uint16_t getLightSensorData();
+void setRelayState(RelayState _rel, uint8_t state);
+uint8_t getRelayState(RelayState _rel);
+
+// ===================================================
 
 // опрос кнопки
 void btnCheck(void *pvParameters);
@@ -107,10 +79,6 @@ void startSleepMode(void *pvParameters);
 
 // ===================================================
 
-/// @brief установка заданного состояния для заданного реле
-/// @param rel заданное реле; 1 - ближний свет, 2 - ДХО; 0 - оба реле
-/// @param state заданное состояние
-void setRelayState(uint8_t rel, uint8_t state);
 
 /// @brief начальный старт головного света при включении любого режима при запущенном двигателе
 void runLightMode();

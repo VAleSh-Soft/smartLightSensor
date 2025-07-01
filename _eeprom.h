@@ -28,7 +28,7 @@ void eeprom_init()
 
   if (read_eeprom_8(EEPROM_INDEX_FOR_CURRENT_MODE) > uint8_t(MODE_AUTO))
   {
-    write_eeprom_8(EEPROM_INDEX_FOR_CURRENT_MODE, uint8_t(MODE_OFF));
+    write_eeprom_8(EEPROM_INDEX_FOR_CURRENT_MODE, uint8_t(MODE_MANUAL));
   }
   
   if (read_eeprom_8(EEPROM_INDEX_FOR_TURN_ON_DELAY) > 10)
