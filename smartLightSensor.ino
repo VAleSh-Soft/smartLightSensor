@@ -170,6 +170,7 @@ void startSleepMode(void *pvParameters)
       if (t >= read_eeprom_16(EEPROM_INDEX_FOR_RUN_SLEEP_DELAY) * 10)
       {
         // здесь делаем подготовку ко сну
+        vTaskSuspend(xTask_leds);
         leds[0] = CRGB::Black;
         FastLED.show();
 
@@ -218,7 +219,7 @@ void setup()
   // =================================================
 
   xTaskCreate(btnCheck, "check_button", 4096, NULL, 1, NULL);
-  xTaskCreate(setLeds, "set_led", 2048, NULL, 1, NULL);
+  xTaskCreate(setLeds, "set_led", 2048, NULL, 1, &xTask_leds);
   xTaskCreate(lightSensorCheck, "light_sensor_check", 2048, NULL, 1, NULL);
   xTaskCreate(engineRunCheck, "engine_run_check", 2048, NULL, 1, NULL);
   xTaskCreate(startSleepMode, "start_sleep_mode", 2048, NULL, 1, NULL);

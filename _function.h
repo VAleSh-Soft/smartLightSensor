@@ -9,7 +9,7 @@ bool engine_run_flag = false; // флаг запуска двигателя
 
 // ===================================================
 
-xSemaphoreHandle xSemaphore_leds;
+xTaskHandle xTask_leds;
 
 // ===================================================
 
@@ -60,7 +60,7 @@ uint8_t getRelayState(RelayState _rel)
 
 void semaphoreInit()
 {
-  xSemaphore_leds = xSemaphoreCreateBinary();
+  // xSemaphore_leds = xSemaphoreCreateBinary();
 }
 
 // ===================================================
