@@ -11,6 +11,8 @@ bool engine_run_flag = false; // флаг запуска двигателя
 
 xTaskHandle xTask_leds;
 
+xSemaphoreHandle xSemaphore_relays = NULL;
+
 // ===================================================
 
 void setCurrentMode(AutoLightMode _mode)
@@ -37,30 +39,51 @@ void setRelayState(RelayState _rel, uint8_t state)
 {
   if (_rel != RELAY_LB)
   {
-    digitalWrite(RELAY_FOR_PL_PIN, state);
+    if (xSemaphoreTake(xSemaphore_relays, portMAX_DELAY) == pdTRUE)
+    {
+      digitalWrite(RELAY_FOR_PL_PIN, state);
+      xSemaphoreGive(xSemaphore_relays);
+    }
   }
   if (_rel != RELAY_PL)
   {
-    digitalWrite(RELAY_FOR_LB_PIN, state);
+    if (xSemaphoreTake(xSemaphore_relays, portMAX_DELAY) == pdTRUE)
+    {
+      digitalWrite(RELAY_FOR_LB_PIN, state);
+      xSemaphoreGive(xSemaphore_relays);
+    }
   }
 }
 
 uint8_t getRelayState(RelayState _rel)
 {
+  uint8_t state = LOW;
+
   switch (_rel)
   {
   case RELAY_LB:
-    return digitalRead(RELAY_FOR_LB_PIN);
+    if (xSemaphoreTake(xSemaphore_relays, portMAX_DELAY) == pdTRUE)
+    {
+      state = digitalRead(RELAY_FOR_LB_PIN);
+      xSemaphoreGive(xSemaphore_relays);
+    }
+    break;
   case RELAY_PL:
-    return digitalRead(RELAY_FOR_PL_PIN);
+    if (xSemaphoreTake(xSemaphore_relays, portMAX_DELAY) == pdTRUE)
+    {
+      state = digitalRead(RELAY_FOR_PL_PIN);
+      xSemaphoreGive(xSemaphore_relays);
+    }
+    break;
   default:
-    return LOW;
+    break;
   }
+  return state;
 }
 
 void semaphoreInit()
 {
-  // xSemaphore_leds = xSemaphoreCreateBinary();
+  xSemaphore_relays = xSemaphoreCreateMutex();
 }
 
 // ===================================================
