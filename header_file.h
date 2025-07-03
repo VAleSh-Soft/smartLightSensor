@@ -16,14 +16,27 @@ constexpr uint8_t RELAY_FOR_PL_PIN = 9; // пин реле габаритных 
 #define EEPROM_INDEX_FOR_LIGHT_SENSOR_THRESHOLD 1 // индекс для хранения порога включения ближнего света, uint16_t
 #define EEPROM_INDEX_FOR_CURRENT_MODE 3           // индекс для хранения текущего режима работы, uint8_t
 #define EEPROM_INDEX_FOR_TURN_ON_DELAY 4          // индекс для хранения задержки включения ближнего света после запуска двигателя, uint8_t
-#define EEPROM_INDEX_FOR_TURN_OFF_DELAY 5          // индекс для хранения задержки выключения ближнего света после перехода порога датчика освещенности, uint8_t
+#define EEPROM_INDEX_FOR_TURN_OFF_DELAY 5         // индекс для хранения задержки выключения ближнего света после перехода порога датчика освещенности, uint8_t
 #define EEPROM_INDEX_FOR_RUN_SLEEP_DELAY 6        // индекс для хранения задержки перехода в спящий режим после выключения зажигания, uint16_t
 
-// ===================================================
+// ==== Значения по умолчанию ========================
+
+constexpr uint16_t DEFAULT_LIGHT_SENSOR_THRESHOLD = 3000; // значение датчика света по умолчанию, при котором включается ближний свет
+
+constexpr uint8_t MAX_TURN_ON_DELAY = 10;    // максимальная задержка включения ближнего света после запуска двигателя, в секундах
+constexpr uint8_t DEFAULT_TURN_ON_DELAY = 3; // задержка по умолчанию включения ближнего света после запуска двигателя, в секундах
+
+constexpr uint8_t MAX_TURN_OFF_DELAY = 60; // максимальная задержка выключения ближнего света после перехода порога датчика освещенности, в секундах
+constexpr uint8_t MIN_TURN_OFF_DELAY = 5;  // минимальная задержка выключения ближнего света после перехода порога датчика освещенности, в секундах
+constexpr uint8_t DEFAULT_TURN_OFF_DELAY = 30;
+// задержка по умолчанию выключения ближнего света после перехода порога датчика освещенности, в секундах
+constexpr uint16_t MAX_RUN_SLEEP_DELAY = 60;     // максимальная задержка перехода в спящий режим после выключения зажигания, в секундах
+constexpr uint16_t DEFAULT_RUN_SLEEP_DELAY = 10; // задержка по умолчанию перехода в спящий режим после выключения зажигания, в секундах
 
 constexpr uint16_t LIGHT_SENSOR_THRESHOLD_HISTERESIS = 200; // гистрезис порога датчика света
-constexpr uint8_t MAX_LED_BRIGHTNESS = 250;                 // максимальная яркость светодиода
-constexpr uint8_t MIN_LED_BRIGHTNESS = 50;                  // минимальная яркость светодиода
+
+constexpr uint8_t MAX_LED_BRIGHTNESS = 250; // максимальная яркость светодиода
+constexpr uint8_t MIN_LED_BRIGHTNESS = 50;  // минимальная яркость светодиода
 
 // ===================================================
 
@@ -80,11 +93,3 @@ void engineRunCheck(void *pvParameters);
 // переход в спящий режим
 void startSleepMode(void *pvParameters);
 
-// // отключение ближнего света через 30 секунд после превышения порога датчика света
-// void turnOffLowBeam(void *pvParameters);
-
-// ===================================================
-
-
-/// @brief начальный старт головного света при включении любого режима при запущенном двигателе
-void runLightMode();
