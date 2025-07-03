@@ -12,6 +12,7 @@ bool engine_run_flag = false; // флаг запуска двигателя
 xTaskHandle xTask_leds;
 
 xSemaphoreHandle xSemaphore_relays = NULL;
+xSemaphoreHandle xSemaphore_eng_run = NULL;
 
 // ===================================================
 
@@ -27,56 +28,57 @@ AutoLightMode getCurrentMode()
 
 void setEngineRunFlag(bool _flag)
 {
-  engine_run_flag = _flag;
+  if (xSemaphoreTake(xSemaphore_eng_run, portMAX_DELAY) == pdTRUE)
+  {
+    engine_run_flag = _flag;
+    xSemaphoreGive(xSemaphore_eng_run);
+  }
 }
 
 bool getEngineRunFlag()
 {
-  return engine_run_flag;
+  bool _flag = false;
+  if (xSemaphoreTake(xSemaphore_eng_run, portMAX_DELAY) == pdTRUE)
+  {
+    _flag = engine_run_flag;
+    xSemaphoreGive(xSemaphore_eng_run);
+  }
+  return _flag;
 }
 
 void setRelayState(RelayState _rel, uint8_t state)
 {
-  if (_rel != RELAY_LB)
+  if (xSemaphoreTake(xSemaphore_relays, portMAX_DELAY) == pdTRUE)
   {
-    if (xSemaphoreTake(xSemaphore_relays, portMAX_DELAY) == pdTRUE)
+    if (_rel != RELAY_LB)
     {
       digitalWrite(RELAY_FOR_PL_PIN, state);
-      xSemaphoreGive(xSemaphore_relays);
     }
-  }
-  if (_rel != RELAY_PL)
-  {
-    if (xSemaphoreTake(xSemaphore_relays, portMAX_DELAY) == pdTRUE)
+    if (_rel != RELAY_PL)
     {
       digitalWrite(RELAY_FOR_LB_PIN, state);
-      xSemaphoreGive(xSemaphore_relays);
     }
+    xSemaphoreGive(xSemaphore_relays);
   }
 }
 
 uint8_t getRelayState(RelayState _rel)
 {
   uint8_t state = LOW;
-
-  switch (_rel)
+  if (xSemaphoreTake(xSemaphore_relays, portMAX_DELAY) == pdTRUE)
   {
-  case RELAY_LB:
-    if (xSemaphoreTake(xSemaphore_relays, portMAX_DELAY) == pdTRUE)
+    switch (_rel)
     {
+    case RELAY_LB:
       state = digitalRead(RELAY_FOR_LB_PIN);
-      xSemaphoreGive(xSemaphore_relays);
-    }
-    break;
-  case RELAY_PL:
-    if (xSemaphoreTake(xSemaphore_relays, portMAX_DELAY) == pdTRUE)
-    {
+      break;
+    case RELAY_PL:
       state = digitalRead(RELAY_FOR_PL_PIN);
-      xSemaphoreGive(xSemaphore_relays);
+      break;
+    default:
+      break;
     }
-    break;
-  default:
-    break;
+    xSemaphoreGive(xSemaphore_relays);
   }
   return state;
 }
@@ -84,6 +86,7 @@ uint8_t getRelayState(RelayState _rel)
 void semaphoreInit()
 {
   xSemaphore_relays = xSemaphoreCreateMutex();
+  xSemaphore_eng_run = xSemaphoreCreateMutex();
 }
 
 // ===================================================
