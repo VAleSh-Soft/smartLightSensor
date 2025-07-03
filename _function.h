@@ -9,6 +9,10 @@ bool engine_run_flag = false; // флаг запуска двигателя
 
 // ===================================================
 
+xSemaphoreHandle xSemaphore_leds;
+
+// ===================================================
+
 void setCurrentMode(AutoLightMode _mode)
 {
   write_eeprom_8(EEPROM_INDEX_FOR_CURRENT_MODE, uint8_t(_mode));
@@ -52,6 +56,11 @@ uint8_t getRelayState(RelayState _rel)
   default:
     return LOW;
   }
+}
+
+void semaphoreInit()
+{
+  xSemaphore_leds = xSemaphoreCreateBinary();
 }
 
 // ===================================================

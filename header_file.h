@@ -79,6 +79,7 @@ void setEngineRunFlag(bool _flag);
 bool getEngineRunFlag();
 void setRelayState(RelayState _rel, uint8_t state);
 uint8_t getRelayState(RelayState _rel);
+void semaphoreInit();
 
 // ===================================================
 

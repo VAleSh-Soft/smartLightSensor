@@ -127,10 +127,9 @@ void engineRunCheck(void *pvParameters)
     if (!getEngineRunFlag())
     {
       if (digitalRead(ENGINE_RUN_PIN))
-      { // поднимать флаг запуска двигателя и, соответственно, включать свет только по истечении времени задержки;
+      { // поднимать флаг запуска двигателя и, соответственно, включать БС только по истечении времени задержки;
         vTaskDelay(read_eeprom_8(EEPROM_INDEX_FOR_TURN_ON_DELAY) * 1000ul);
         setEngineRunFlag(true);
-        // runLightMode();
       }
     }
 
@@ -214,6 +213,7 @@ void setup()
 
   eeprom_init();
   setCurrentMode(AutoLightMode(read_eeprom_8(EEPROM_INDEX_FOR_CURRENT_MODE)));
+  semaphoreInit();
 
   // =================================================
 
