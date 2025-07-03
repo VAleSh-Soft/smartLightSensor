@@ -7,6 +7,8 @@
 
 #define EEPROM_SIZE 128
 
+xSemaphoreHandle xSemaphore_eeprom;
+
 // ===================================================
 
 void eeprom_init();
@@ -19,6 +21,8 @@ void write_eeprom_16(uint16_t _index, uint16_t _data);
 
 void eeprom_init()
 {
+  xSemaphore_eeprom = xSemaphoreCreateMutex();
+
   EEPROM.begin(EEPROM_SIZE);
 
   if (read_eeprom_16(EEPROM_INDEX_FOR_LIGHT_SENSOR_THRESHOLD) > 4095 ||
@@ -53,27 +57,45 @@ void eeprom_init()
 
 uint8_t read_eeprom_8(uint16_t _index)
 {
-  return EEPROM.read(_index);
+  uint8_t _data = 0;
+  if (xSemaphoreTake(xSemaphore_eeprom, portMAX_DELAY) == pdTRUE)
+  {
+    _data = EEPROM.read(_index);
+    xSemaphoreGive(xSemaphore_eeprom);
+  }
+  return _data;
 }
 
 void write_eeprom_8(uint16_t _index, uint8_t _data)
 {
-  if (EEPROM.read(_index) != _data)
+  if (xSemaphoreTake(xSemaphore_eeprom, portMAX_DELAY) == pdTRUE)
   {
-    EEPROM.write(_index, _data);
+    if (EEPROM.read(_index) != _data)
+    {
+      EEPROM.write(_index, _data);
+    }
+    EEPROM.commit();
+    xSemaphoreGive(xSemaphore_eeprom);
   }
-  EEPROM.commit();
 }
 
 uint16_t read_eeprom_16(uint16_t _index)
 {
   uint16_t _data;
-  EEPROM.get(_index, _data);
+  if (xSemaphoreTake(xSemaphore_eeprom, portMAX_DELAY) == pdTRUE)
+  {
+    EEPROM.get(_index, _data);
+    xSemaphoreGive(xSemaphore_eeprom);
+  }
   return (_data);
 }
 
 void write_eeprom_16(uint16_t _index, uint16_t _data)
 {
-  EEPROM.put(_index, _data);
-  EEPROM.commit();
+  if (xSemaphoreTake(xSemaphore_eeprom, portMAX_DELAY) == pdTRUE)
+  {
+    EEPROM.put(_index, _data);
+    EEPROM.commit();
+    xSemaphoreGive(xSemaphore_eeprom);
+  }
 }
