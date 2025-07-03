@@ -105,7 +105,7 @@ void engineRunCheck(void *pvParameters)
     {
       if (digitalRead(ENGINE_RUN_PIN))
       { // поднимать флаг запуска двигателя и, соответственно, включать свет только по истечении времени задержки;
-        vTaskDelay(read_eeprom_8(EEPROM_INDEX_FOR_TURN_ON_DELAY));
+        vTaskDelay(read_eeprom_8(EEPROM_INDEX_FOR_TURN_ON_DELAY) * 1000ul);
         setEngineRunFlag(true);
         // runLightMode();
       }
