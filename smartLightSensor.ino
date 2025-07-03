@@ -34,6 +34,9 @@ void btnCheck(void *pvParameters)
 
 void setLeds(void *pvParameters)
 {
+
+  uint8_t num = 0;
+
   while (1)
   {
     if (getCurrentMode() != MODE_AUTO)
@@ -46,6 +49,24 @@ void setLeds(void *pvParameters)
       leds[0] = (!getEngineRunFlag()) ? CRGB::Green
                                       : ((getRelayState(RELAY_LB)) ? CRGB::Blue
                                                                    : CRGB::Orange);
+    }
+
+    // если включен WiFi, светодиод мигает с частотой 1 Гц
+    if (wifi_state == WIFI_AP)
+    {
+      if (num >= 10)
+      {
+        leds[0] = CRGB::Black;
+      }
+
+      if (++num >= 20)
+      {
+        num = 0;
+      }
+    }
+    else
+    {
+      num = 0;
     }
 
     FastLED.show();

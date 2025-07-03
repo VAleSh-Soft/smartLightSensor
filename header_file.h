@@ -53,6 +53,12 @@ enum RelayState : uint8_t
   RELAY_PL   // реле габаритных огней
 };
 
+enum WiFiState : uint8_t
+{
+  WIFI_OFF,
+  WIFI_AP
+};
+
 // ===================================================
 
 const uint8_t LEDS_NUM = 1;
@@ -93,4 +99,3 @@ void lightSensorCheck(void *pvParameters);
 void engineRunCheck(void *pvParameters);
 // переход в спящий режим
 void startSleepMode(void *pvParameters);
-
