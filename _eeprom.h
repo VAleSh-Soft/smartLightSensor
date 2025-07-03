@@ -21,7 +21,7 @@ void eeprom_init()
 {
   EEPROM.begin(EEPROM_SIZE);
 
-  if (read_eeprom_16(EEPROM_INDEX_FOR_LIGHT_SENSOR_THRESHOLD) > 1023 ||
+  if (read_eeprom_16(EEPROM_INDEX_FOR_LIGHT_SENSOR_THRESHOLD) > 4095 ||
       read_eeprom_16(EEPROM_INDEX_FOR_LIGHT_SENSOR_THRESHOLD) == 0)
   {
     write_eeprom_16(EEPROM_INDEX_FOR_LIGHT_SENSOR_THRESHOLD, 3000);

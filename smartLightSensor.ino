@@ -57,14 +57,16 @@ void setLeds(void *pvParameters)
 
 void lightSensorCheck(void *pvParameters)
 {
-  uint16_t sensor_data;
+  uint16_t sensor_data = analogRead(LIGHT_SENSOR_PIN);
   uint16_t t;
   bool timer = false;
   uint16_t timer_counter = 0;
 
+  const uint32_t LS_DELAY = 20ul;
+
   while (1)
   {
-    sensor_data = getLightSensorData();
+    sensor_data = (sensor_data * 3 + analogRead(LIGHT_SENSOR_PIN)) / 4;
     t = read_eeprom_16(EEPROM_INDEX_FOR_LIGHT_SENSOR_THRESHOLD);
 
     // тут же управление светом в автоматическом режиме
@@ -76,7 +78,7 @@ void lightSensorCheck(void *pvParameters)
         timer = false;
       }
       else if (sensor_data > (t + LIGHT_SENSOR_THRESHOLD_HISTERESIS))
-      { // если уровень превысил порог включения БС, реле БС включено, а таймер отключения БС еще не запущен, запустить его
+      { // если уровень превысил порог включения БС, реле БС включено, а флаг отключения БС еще не поднят, поднять его
         if (getRelayState(RELAY_LB) && !timer)
         {
           timer = true;
@@ -87,7 +89,7 @@ void lightSensorCheck(void *pvParameters)
       // тут же управление таймером отключения БС, если поднят флаг таймера
       if (timer)
       {
-        if (timer_counter >= read_eeprom_8(EEPROM_INDEX_FOR_TURN_OFF_DELAY) * 20)
+        if (timer_counter >= read_eeprom_8(EEPROM_INDEX_FOR_TURN_OFF_DELAY) * 1000ul / LS_DELAY)
         {
           setRelayState(RELAY_ALL, LOW);
           timer = false;
@@ -97,6 +99,10 @@ void lightSensorCheck(void *pvParameters)
           timer_counter++;
         }
       }
+    }
+    else if (getRelayState(RELAY_LB))
+    {
+      setRelayState(RELAY_ALL, LOW);
     }
 
     // и здесь же управление яркостью светодиода - вне зависимость от режима работы
@@ -109,7 +115,7 @@ void lightSensorCheck(void *pvParameters)
       FastLED.setBrightness(MAX_LED_BRIGHTNESS);
     }
 
-    vTaskDelay(50);
+    vTaskDelay(LS_DELAY);
   }
   vTaskDelete(NULL);
 }
@@ -208,7 +214,6 @@ void setup()
 
   eeprom_init();
   setCurrentMode(AutoLightMode(read_eeprom_8(EEPROM_INDEX_FOR_CURRENT_MODE)));
-  light_sensor_data = analogRead(LIGHT_SENSOR_PIN);
 
   // =================================================
 

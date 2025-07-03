@@ -5,51 +5,18 @@
 
 // ===================================================
 
-AutoLightMode cur_mode = MODE_MANUAL; // текущий режим работы
-bool engine_run_flag = false;         // флаг запуска двигателя
-uint16_t light_sensor_data;           // текущие показания датчика света
-
-// ===================================================
-
-constexpr uint16_t LIGHT_SENSOR_THRESHOLD_HISTERESIS = 200; // гистрезис порога датчика света
-constexpr uint8_t MAX_LED_BRIGHTNESS = 250;                 // максимальная яркость светодиода
-constexpr uint8_t MIN_LED_BRIGHTNESS = 50;                  // минимальная яркость светодиода
+bool engine_run_flag = false; // флаг запуска двигателя
 
 // ===================================================
 
 void setCurrentMode(AutoLightMode _mode)
 {
-  cur_mode = _mode;
   write_eeprom_8(EEPROM_INDEX_FOR_CURRENT_MODE, uint8_t(_mode));
-
-  // включаем/выключаем реле согласно текущего режима работы
-  switch (cur_mode)
-  {
-  case MODE_AUTO:
-    if (getEngineRunFlag())
-    {
-      uint16_t t, d;
-      t = read_eeprom_16(EEPROM_INDEX_FOR_LIGHT_SENSOR_THRESHOLD);
-      d = getLightSensorData();
-      if (d <= t)
-      {
-        setRelayState(RELAY_ALL, HIGH);
-      }
-      else if (d > t + LIGHT_SENSOR_THRESHOLD_HISTERESIS)
-      {
-        setRelayState(RELAY_ALL, LOW);
-      }
-    }
-    break;
-  default:
-    setRelayState(RELAY_ALL, LOW);
-    break;
-  }
 }
 
 AutoLightMode getCurrentMode()
 {
-  return cur_mode;
+  return (AutoLightMode)read_eeprom_8(EEPROM_INDEX_FOR_CURRENT_MODE);
 }
 
 void setEngineRunFlag(bool _flag)
@@ -60,11 +27,6 @@ void setEngineRunFlag(bool _flag)
 bool getEngineRunFlag()
 {
   return engine_run_flag;
-}
-uint16_t getLightSensorData()
-{
-  light_sensor_data = (light_sensor_data * 3 + analogRead(LIGHT_SENSOR_PIN)) / 4;
-  return light_sensor_data;
 }
 
 void setRelayState(RelayState _rel, uint8_t state)

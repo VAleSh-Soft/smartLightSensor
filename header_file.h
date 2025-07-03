@@ -21,6 +21,12 @@ constexpr uint8_t RELAY_FOR_PL_PIN = 9; // пин реле габаритных 
 
 // ===================================================
 
+constexpr uint16_t LIGHT_SENSOR_THRESHOLD_HISTERESIS = 200; // гистрезис порога датчика света
+constexpr uint8_t MAX_LED_BRIGHTNESS = 250;                 // максимальная яркость светодиода
+constexpr uint8_t MIN_LED_BRIGHTNESS = 50;                  // минимальная яркость светодиода
+
+// ===================================================
+
 enum AutoLightMode : uint8_t
 {
   MODE_MANUAL, // ручной режим
@@ -58,7 +64,6 @@ void setCurrentMode(AutoLightMode _mode);
 AutoLightMode getCurrentMode();
 void setEngineRunFlag(bool _flag);
 bool getEngineRunFlag();
-uint16_t getLightSensorData();
 void setRelayState(RelayState _rel, uint8_t state);
 uint8_t getRelayState(RelayState _rel);
 
