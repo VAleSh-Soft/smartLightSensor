@@ -5,7 +5,7 @@
 
 // ==== Настройки ====================================
 
-constexpr uint8_t LIGHT_SENSOR_PIN = 4; // пин датчика света
+constexpr uint8_t LIGHT_SENSOR_PIN = 4; // пин датчика освещенности
 constexpr uint8_t IGNITION_PIN = 5;     // пин, на который приходит сигнал с линии зажигания; при появлении на этом пине высокого уровня МК выходит из глубокого сна, поэтому для esp32c3 допустимые значения 0..5
 constexpr uint8_t ENGINE_RUN_PIN = 6;   // пин, на который приходит сигнал с вывода D генератора или HIGH при запущенном двигателе
 constexpr uint8_t BTN_MODE_PIN = 3;     // пин кнопки режима работы
@@ -16,7 +16,8 @@ constexpr uint8_t RELAY_FOR_PL_PIN = 9; // пин реле габаритных 
 #define EEPROM_INDEX_FOR_LIGHT_SENSOR_THRESHOLD 1 // индекс для хранения порога включения ближнего света, uint16_t
 #define EEPROM_INDEX_FOR_CURRENT_MODE 3           // индекс для хранения текущего режима работы, uint8_t
 #define EEPROM_INDEX_FOR_TURN_ON_DELAY 4          // индекс для хранения задержки включения ближнего света после запуска двигателя, uint8_t
-#define EEPROM_INDEX_FOR_RUN_SLEEP_DELAY 5        // индекс для хранения задержки перехода в спящий режим после выключения зажигания, uint16_t
+#define EEPROM_INDEX_FOR_TURN_OFF_DELAY 5          // индекс для хранения задержки выключения ближнего света после перехода порога датчика освещенности, uint8_t
+#define EEPROM_INDEX_FOR_RUN_SLEEP_DELAY 6        // индекс для хранения задержки перехода в спящий режим после выключения зажигания, uint16_t
 
 // ===================================================
 

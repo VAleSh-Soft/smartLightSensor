@@ -37,6 +37,11 @@ void eeprom_init()
     write_eeprom_8(EEPROM_INDEX_FOR_TURN_ON_DELAY, 3);
   }
 
+  if (read_eeprom_8(EEPROM_INDEX_FOR_TURN_OFF_DELAY) > 60)
+  {
+    write_eeprom_8(EEPROM_INDEX_FOR_TURN_OFF_DELAY, 30);
+  }
+
   if (read_eeprom_16(EEPROM_INDEX_FOR_RUN_SLEEP_DELAY) > 60)
   {
     write_eeprom_16(EEPROM_INDEX_FOR_RUN_SLEEP_DELAY, 10);

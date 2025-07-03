@@ -9,9 +9,13 @@ AutoLightMode cur_mode = MODE_MANUAL; // текущий режим работы
 bool engine_run_flag = false;         // флаг запуска двигателя
 uint16_t light_sensor_data;           // текущие показания датчика света
 
-const uint16_t LIGHT_SENSOR_THRESHOLD_HISTERESIS = 200; // гистрезис порога датчика света
-const uint8_t MAX_LED_BRIGHTNESS = 250;                 // максимальная яркость светодиода
-const uint8_t MIN_LED_BRIGHTNESS = 50;                  // минимальная яркость светодиода
+// ===================================================
+
+constexpr uint16_t LIGHT_SENSOR_THRESHOLD_HISTERESIS = 200; // гистрезис порога датчика света
+constexpr uint8_t MAX_LED_BRIGHTNESS = 250;                 // максимальная яркость светодиода
+constexpr uint8_t MIN_LED_BRIGHTNESS = 50;                  // минимальная яркость светодиода
+
+// ===================================================
 
 void setCurrentMode(AutoLightMode _mode)
 {

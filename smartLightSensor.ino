@@ -58,26 +58,43 @@ void setLeds(void *pvParameters)
 void lightSensorCheck(void *pvParameters)
 {
   uint16_t sensor_data;
-  uint16_t t = read_eeprom_16(EEPROM_INDEX_FOR_LIGHT_SENSOR_THRESHOLD);
+  uint16_t t;
+  bool timer = false;
+  uint16_t timer_counter = 0;
 
   while (1)
   {
     sensor_data = getLightSensorData();
+    t = read_eeprom_16(EEPROM_INDEX_FOR_LIGHT_SENSOR_THRESHOLD);
 
     // тут же управление светом в автоматическом режиме
     if (getCurrentMode() == MODE_AUTO && getEngineRunFlag())
     {
-      t = read_eeprom_16(EEPROM_INDEX_FOR_LIGHT_SENSOR_THRESHOLD);
       if (sensor_data <= t)
-      { // если уровень снизился до порога включения БС, то включить БС и остановить таймер отключения БС
-        setRelayState(RELAY_LB, HIGH);
-        // tasks.stopTask(turn_off_low_beam_timer);
+      { // если уровень снизился до порога включения БС, то включить БС и сбросить флаг отключения БС
+        setRelayState(RELAY_ALL, HIGH);
+        timer = false;
       }
       else if (sensor_data > (t + LIGHT_SENSOR_THRESHOLD_HISTERESIS))
       { // если уровень превысил порог включения БС, реле БС включено, а таймер отключения БС еще не запущен, запустить его
-        if (getRelayState(RELAY_LB) /*&& !tasks.getTaskState(turn_off_low_beam_timer)*/)
+        if (getRelayState(RELAY_LB) && !timer)
         {
-          // tasks.startTask(turn_off_low_beam_timer);
+          timer = true;
+          timer_counter = 0;
+        }
+      }
+
+      // тут же управление таймером отключения БС, если поднят флаг таймера
+      if (timer)
+      {
+        if (timer_counter >= read_eeprom_8(EEPROM_INDEX_FOR_TURN_OFF_DELAY) * 20)
+        {
+          setRelayState(RELAY_ALL, LOW);
+          timer = false;
+        }
+        else
+        {
+          timer_counter++;
         }
       }
     }
