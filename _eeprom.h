@@ -33,9 +33,9 @@ void eeprom_init()
     write_eeprom_16(EEPROM_INDEX_FOR_LIGHT_SENSOR_THRESHOLD, DEFAULT_LIGHT_SENSOR_THRESHOLD);
   }
 
-  if (read_eeprom_8(EEPROM_INDEX_FOR_CURRENT_MODE) > uint8_t(MODE_AUTO))
+  if (read_eeprom_8(EEPROM_INDEX_FOR_CURRENT_MODE) > uint8_t(SLS_MODE_AUTO))
   {
-    write_eeprom_8(EEPROM_INDEX_FOR_CURRENT_MODE, uint8_t(MODE_MANUAL));
+    write_eeprom_8(EEPROM_INDEX_FOR_CURRENT_MODE, uint8_t(SLS_MODE_MANUAL));
   }
 
   if (read_eeprom_8(EEPROM_INDEX_FOR_TURN_ON_DELAY) > MAX_TURN_ON_DELAY)

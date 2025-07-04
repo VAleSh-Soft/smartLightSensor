@@ -6,7 +6,7 @@
 // ===================================================
 
 bool engine_run_flag = false;    // флаг запуска двигателя
-WiFiState wifi_state = WIFI_OFF; // состояние WiFi
+WiFiState wifi_state = SLS_WIFI_OFF; // состояние WiFi
 char *wifi_ssid;                 // имя точки доступа
 char *wifi_pass;                 // пароль точки доступа
 
@@ -54,11 +54,11 @@ void setRelayState(RelayState _rel, uint8_t state)
 {
   if (xSemaphoreTake(xSemaphore_relays, portMAX_DELAY) == pdTRUE)
   {
-    if (_rel != RELAY_LB)
+    if (_rel != SLS_RELAY_LB)
     {
       digitalWrite(RELAY_FOR_PL_PIN, state);
     }
-    if (_rel != RELAY_PL)
+    if (_rel != SLS_RELAY_PL)
     {
       digitalWrite(RELAY_FOR_LB_PIN, state);
     }
@@ -73,10 +73,10 @@ uint8_t getRelayState(RelayState _rel)
   {
     switch (_rel)
     {
-    case RELAY_LB:
+    case SLS_RELAY_LB:
       _state = digitalRead(RELAY_FOR_LB_PIN);
       break;
-    case RELAY_PL:
+    case SLS_RELAY_PL:
       _state = digitalRead(RELAY_FOR_PL_PIN);
       break;
     default:

@@ -1,3 +1,4 @@
+#include <WiFi.h>
 #include "header_file.h"
 #include "_eeprom.h"
 #include "_function.h"
@@ -11,25 +12,25 @@ void btnCheck(void *pvParameters)
     switch (btnMode.getButtonState())
     {
     case BTN_ONECLICK: // короткий клик включает автоматический режим работы
-      if (getCurrentMode() != MODE_AUTO)
+      if (getCurrentMode() != SLS_MODE_AUTO)
       {
-        setCurrentMode(MODE_AUTO);
+        setCurrentMode(SLS_MODE_AUTO);
       }
       break;
     case BTN_LONGCLICK: // длинный клик выключает автоматический режим работы
-      if (getCurrentMode() != MODE_MANUAL)
+      if (getCurrentMode() != SLS_MODE_MANUAL)
       {
-        setCurrentMode(MODE_MANUAL);
+        setCurrentMode(SLS_MODE_MANUAL);
       }
       break;
     case BTN_DBLCLICK: // двойной клик включает/выключает WiFi модуль
-      if (getWiFiState() == WIFI_OFF)
+      if (getWiFiState() == SLS_WIFI_OFF)
       {
-        setWiFiState(WIFI_CONNECT);
+        setWiFiState(SLS_WIFI_CONNECT);
       }
       else
       {
-        setWiFiState(WIFI_OFF);
+        setWiFiState(SLS_WIFI_OFF);
       }
       break;
     }
@@ -46,7 +47,7 @@ void setLeds(void *pvParameters)
 
   while (1)
   {
-    if (getCurrentMode() != MODE_AUTO)
+    if (getCurrentMode() != SLS_MODE_AUTO)
     {
       leds[0] = CRGB::Red; // в неавтоматическом режиме светится красным
     }
@@ -54,19 +55,20 @@ void setLeds(void *pvParameters)
     {
       // в автоматическом режиме светится: зеленым - двигатель не запущен; синим - двигатель запущен, включен ближний свет; оранжевым - двигатель запущен, ближний свет выключен
       leds[0] = (!getEngineRunFlag()) ? CRGB::Green
-                                      : ((getRelayState(RELAY_LB)) ? CRGB::Blue
-                                                                   : CRGB::Orange);
+                                      : ((getRelayState(SLS_RELAY_LB)) ? CRGB::Blue
+                                                                       : CRGB::Orange);
     }
 
     // если включен WiFi, светодиод мигает с частотой 1 Гц
-    if (wifi_state == WIFI_AP)
+    if (wifi_state != SLS_WIFI_OFF)
     {
-      if (num >= 10)
+      uint8_t max_num = (wifi_state == SLS_WIFI_AP) ? 20 : 2;
+      if (num >= max_num / 2)
       {
         leds[0] = CRGB::Black;
       }
 
-      if (++num >= 20)
+      if (++num >= max_num)
       {
         num = 0;
       }
@@ -90,7 +92,7 @@ void lightSensorCheck(void *pvParameters)
   bool timer = false;
   uint16_t timer_counter = 0;
 
-  const uint32_t LS_DELAY = 20ul;
+  const uint32_t SLS_DELAY = 20ul;
 
   while (1)
   {
@@ -98,16 +100,16 @@ void lightSensorCheck(void *pvParameters)
     t = read_eeprom_16(EEPROM_INDEX_FOR_LIGHT_SENSOR_THRESHOLD);
 
     // тут же управление светом в автоматическом режиме
-    if (getCurrentMode() == MODE_AUTO && getEngineRunFlag())
+    if (getCurrentMode() == SLS_MODE_AUTO && getEngineRunFlag())
     {
       if (sensor_data <= t)
       { // если уровень снизился до порога включения БС, то включить БС и сбросить флаг отключения БС
-        setRelayState(RELAY_ALL, HIGH);
+        setRelayState(SLS_RELAY_ALL, HIGH);
         timer = false;
       }
       else if (sensor_data > (t + LIGHT_SENSOR_THRESHOLD_HISTERESIS))
       { // если уровень превысил порог включения БС, реле БС включено, а флаг отключения БС еще не поднят, поднять его
-        if (getRelayState(RELAY_LB) && !timer)
+        if (getRelayState(SLS_RELAY_LB) && !timer)
         {
           timer = true;
           timer_counter = 0;
@@ -117,9 +119,9 @@ void lightSensorCheck(void *pvParameters)
       // тут же управление таймером отключения БС, если поднят флаг таймера
       if (timer)
       {
-        if (timer_counter >= read_eeprom_8(EEPROM_INDEX_FOR_TURN_OFF_DELAY) * 1000ul / LS_DELAY)
+        if (timer_counter >= read_eeprom_8(EEPROM_INDEX_FOR_TURN_OFF_DELAY) * 1000ul / SLS_DELAY)
         {
-          setRelayState(RELAY_ALL, LOW);
+          setRelayState(SLS_RELAY_ALL, LOW);
           timer = false;
         }
         else
@@ -128,9 +130,9 @@ void lightSensorCheck(void *pvParameters)
         }
       }
     }
-    else if (getRelayState(RELAY_LB))
+    else if (getRelayState(SLS_RELAY_LB))
     {
-      setRelayState(RELAY_ALL, LOW);
+      setRelayState(SLS_RELAY_ALL, LOW);
     }
 
     // и здесь же управление яркостью светодиода - вне зависимость от режима работы
@@ -143,7 +145,7 @@ void lightSensorCheck(void *pvParameters)
       FastLED.setBrightness(MAX_LED_BRIGHTNESS);
     }
 
-    vTaskDelay(LS_DELAY);
+    vTaskDelay(SLS_DELAY);
   }
   vTaskDelete(NULL);
 }
@@ -168,34 +170,33 @@ void engineRunCheck(void *pvParameters)
 
 void startSleepMode(void *pvParameters)
 {
-  uint16_t t = 0;
-
+  uint16_t timer = 0;
   bool _flag = false;
 
   while (1)
   {
-    if (_flag)
+    if (!_flag)
     {
-      // если флаг поднят, а зажигание выключено - флаг сбросить
+      // если флаг сброшен, а зажигание выключено - флаг поднять и обнулить счетчик
       if (!digitalRead(IGNITION_PIN))
       {
-        _flag = false;
+        _flag = true;
+        timer = 0;
       }
     }
     else
     {
-      // если флаг сброшен, а зажигание включено - поднять флаг и обнулить счетчик
+      // если флаг поднят, а зажигание включено - сбросить флаг
       if (digitalRead(IGNITION_PIN))
       {
-        _flag = true;
-        t = 0;
+        _flag = false;
       }
     }
 
-    // если флаг сброшен, отсчитываем заданный интервал и уходим в сон
-    if (!_flag)
+    // если флаг поднят, отсчитываем заданный интервал и уходим в сон
+    if (_flag)
     {
-      if (t >= read_eeprom_16(EEPROM_INDEX_FOR_RUN_SLEEP_DELAY) * 10)
+      if (timer >= read_eeprom_16(EEPROM_INDEX_FOR_RUN_SLEEP_DELAY) * 10)
       {
         // здесь делаем подготовку ко сну
         vTaskSuspend(xTask_leds);
@@ -212,11 +213,44 @@ void startSleepMode(void *pvParameters)
       }
       else
       {
-        t++;
+        timer++;
       }
     }
 
     vTaskDelay(100);
+  }
+  vTaskDelete(NULL);
+}
+
+void wifiModuleManagement(void *pvParameters)
+{
+  uint32_t slsDelay = 100ul;
+
+  while (1)
+  {
+    switch (wifi_state)
+    {
+    case SLS_WIFI_CONNECT:
+      WiFi.mode(WIFI_AP);
+      if (WiFi.softAP(wifi_ssid, wifi_pass))
+      {
+        setWiFiState(SLS_WIFI_AP);
+      }
+      break;
+    case SLS_WIFI_OFF:
+      if (WiFi.status() == WL_CONNECTED)
+      {
+        WiFi.disconnect();
+        slsDelay = 100ul;
+      }
+      break;
+    case SLS_WIFI_AP:
+      // HTTP.handleClient();
+      slsDelay = 1ul; // в режиме точки доступа крутим быстро для нормальной реакции сервера
+      break;
+    }
+
+    vTaskDelay(slsDelay);
   }
   vTaskDelete(NULL);
 }
@@ -253,8 +287,7 @@ void setup()
   xTaskCreate(lightSensorCheck, "light_sensor_check", 2048, NULL, 1, NULL);
   xTaskCreate(engineRunCheck, "engine_run_check", 2048, NULL, 1, NULL);
   xTaskCreate(startSleepMode, "start_sleep_mode", 2048, NULL, 1, NULL);
+  xTaskCreate(wifiModuleManagement, "wifi_module_management", 4096, NULL, 1, NULL);
 }
 
-void loop()
-{
-}
+void loop() {}

@@ -47,22 +47,22 @@ constexpr char *DEFAULT_AP_PASSWORD = "12345678"; // пароль точки д�
 
 enum AutoLightMode : uint8_t
 {
-  MODE_MANUAL, // ручной режим
-  MODE_AUTO    // автоматический режим
+  SLS_MODE_MANUAL, // ручной режим
+  SLS_MODE_AUTO    // автоматический режим
 };
 
 enum RelayState : uint8_t
 {
-  RELAY_ALL, // все реле
-  RELAY_LB,  // реле ближнего света
-  RELAY_PL   // реле габаритных огней
+  SLS_RELAY_ALL, // все реле
+  SLS_RELAY_LB,  // реле ближнего света
+  SLS_RELAY_PL   // реле габаритных огней
 };
 
 enum WiFiState : uint8_t
 {
-  WIFI_OFF,     // WiFi отключен
-  WIFI_CONNECT, // включение WiFi
-  WIFI_AP       // WiFi в режиме точки доступа
+  SLS_WIFI_OFF,     // WiFi отключен
+  SLS_WIFI_CONNECT, // включение WiFi
+  SLS_WIFI_AP       // WiFi в режиме точки доступа
 };
 
 // ===================================================
@@ -107,3 +107,5 @@ void lightSensorCheck(void *pvParameters);
 void engineRunCheck(void *pvParameters);
 // переход в спящий режим
 void startSleepMode(void *pvParameters);
+// управление WiFi
+void wifiModuleManagement(void *pvParameters);
