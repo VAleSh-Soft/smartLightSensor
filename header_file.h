@@ -18,6 +18,8 @@ constexpr uint8_t RELAY_FOR_PL_PIN = 9; // пин реле габаритных 
 #define EEPROM_INDEX_FOR_TURN_ON_DELAY 4          // индекс для хранения задержки включения ближнего света после запуска двигателя, uint8_t
 #define EEPROM_INDEX_FOR_TURN_OFF_DELAY 5         // индекс для хранения задержки выключения ближнего света после перехода порога датчика освещенности, uint8_t
 #define EEPROM_INDEX_FOR_RUN_SLEEP_DELAY 6        // индекс для хранения задержки перехода в спящий режим после выключения зажигания, uint16_t
+#define EEPROM_INDEX_FOR_AP_SSID 8                // индекс для хранения имени точки доступа, 33 байта; первый байт - размер строки
+#define EEPROM_INDEX_FOR_AP_PASSWORD 41           // индекс для хранения пароля точки доступа, 65 байт; первый байт - размер строки
 
 // ==== Значения по умолчанию ========================
 
@@ -38,6 +40,9 @@ constexpr uint16_t LIGHT_SENSOR_THRESHOLD_HISTERESIS = 200; // гистрези�
 constexpr uint8_t MAX_LED_BRIGHTNESS = 250; // максимальная яркость светодиода
 constexpr uint8_t MIN_LED_BRIGHTNESS = 50;  // минимальная яркость светодиода
 
+constexpr char *DEFAULT_AP_SSID = "shSmartLight"; // имя точки доступа по умолчанию
+constexpr char *DEFAULT_AP_PASSWORD = "12345678"; // пароль точки доступа по умолчанию
+
 // ===================================================
 
 enum AutoLightMode : uint8_t
@@ -55,8 +60,9 @@ enum RelayState : uint8_t
 
 enum WiFiState : uint8_t
 {
-  WIFI_OFF,
-  WIFI_AP
+  WIFI_OFF,     // WiFi отключен
+  WIFI_CONNECT, // включение WiFi
+  WIFI_AP       // WiFi в режиме точки доступа
 };
 
 // ===================================================
@@ -85,6 +91,8 @@ void setEngineRunFlag(bool _flag);
 bool getEngineRunFlag();
 void setRelayState(RelayState _rel, uint8_t state);
 uint8_t getRelayState(RelayState _rel);
+void setWiFiState(WiFiState _state);
+WiFiState getWiFiState();
 void semaphoreInit();
 
 // ===================================================

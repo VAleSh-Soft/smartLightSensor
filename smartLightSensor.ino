@@ -10,20 +10,27 @@ void btnCheck(void *pvParameters)
   {
     switch (btnMode.getButtonState())
     {
-    case BTN_ONECLICK:
+    case BTN_ONECLICK: // короткий клик включает автоматический режим работы
       if (getCurrentMode() != MODE_AUTO)
       {
         setCurrentMode(MODE_AUTO);
       }
       break;
-    case BTN_LONGCLICK:
+    case BTN_LONGCLICK: // длинный клик выключает автоматический режим работы
       if (getCurrentMode() != MODE_MANUAL)
       {
         setCurrentMode(MODE_MANUAL);
       }
       break;
-    case BTN_DBLCLICK:
-      // здесь включение WiFi
+    case BTN_DBLCLICK: // двойной клик включает/выключает WiFi модуль
+      if (getWiFiState() == WIFI_OFF)
+      {
+        setWiFiState(WIFI_CONNECT);
+      }
+      else
+      {
+        setWiFiState(WIFI_OFF);
+      }
       break;
     }
     vTaskDelay(1);
@@ -233,9 +240,11 @@ void setup()
 
   // =================================================
 
+  semaphoreInit();
   eeprom_init();
   setCurrentMode(AutoLightMode(read_eeprom_8(EEPROM_INDEX_FOR_CURRENT_MODE)));
-  semaphoreInit();
+  wifi_ssid = read_string_from_eeprom(EEPROM_INDEX_FOR_AP_SSID, 32);
+  wifi_pass = read_string_from_eeprom(EEPROM_INDEX_FOR_AP_PASSWORD, 64);
 
   // =================================================
 

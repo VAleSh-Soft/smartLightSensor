@@ -5,8 +5,10 @@
 
 // ===================================================
 
-bool engine_run_flag = false;          // флаг запуска двигателя
+bool engine_run_flag = false;    // флаг запуска двигателя
 WiFiState wifi_state = WIFI_OFF; // состояние WiFi
+char *wifi_ssid;                 // имя точки доступа
+char *wifi_pass;                 // пароль точки доступа
 
 // ===================================================
 
@@ -14,6 +16,7 @@ xTaskHandle xTask_leds;
 
 xSemaphoreHandle xSemaphore_relays = NULL;
 xSemaphoreHandle xSemaphore_eng_run = NULL;
+xSemaphoreHandle xSemaphore_wifi = NULL;
 
 // ===================================================
 
@@ -65,29 +68,49 @@ void setRelayState(RelayState _rel, uint8_t state)
 
 uint8_t getRelayState(RelayState _rel)
 {
-  uint8_t state = LOW;
+  uint8_t _state = LOW;
   if (xSemaphoreTake(xSemaphore_relays, portMAX_DELAY) == pdTRUE)
   {
     switch (_rel)
     {
     case RELAY_LB:
-      state = digitalRead(RELAY_FOR_LB_PIN);
+      _state = digitalRead(RELAY_FOR_LB_PIN);
       break;
     case RELAY_PL:
-      state = digitalRead(RELAY_FOR_PL_PIN);
+      _state = digitalRead(RELAY_FOR_PL_PIN);
       break;
     default:
       break;
     }
     xSemaphoreGive(xSemaphore_relays);
   }
-  return state;
+  return _state;
+}
+
+void setWiFiState(WiFiState _state)
+{
+  if (xSemaphoreTake(xSemaphore_wifi, portMAX_DELAY) == pdTRUE)
+  {
+    wifi_state = _state;
+    xSemaphoreGive(xSemaphore_wifi);
+  }
+}
+
+WiFiState getWiFiState()
+{
+  WiFiState _state;
+  {
+    _state = wifi_state;
+    xSemaphoreGive(xSemaphore_wifi);
+  }
+  return _state;
 }
 
 void semaphoreInit()
 {
   xSemaphore_relays = xSemaphoreCreateMutex();
   xSemaphore_eng_run = xSemaphoreCreateMutex();
+  xSemaphore_wifi = xSemaphoreCreateMutex();
 }
 
 // ===================================================
