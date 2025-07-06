@@ -7,8 +7,6 @@
 
 bool engine_run_flag = false;    // флаг запуска двигателя
 WiFiState wifi_state = SLS_WIFI_OFF; // состояние WiFi
-char *wifi_ssid;                 // имя точки доступа
-char *wifi_pass;                 // пароль точки доступа
 
 // ===================================================
 

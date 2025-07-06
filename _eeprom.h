@@ -16,6 +16,8 @@ uint8_t read_eeprom_8(uint16_t _index);
 void write_eeprom_8(uint16_t _index, uint8_t _data);
 uint16_t read_eeprom_16(uint16_t _index);
 void write_eeprom_16(uint16_t _index, uint16_t _data);
+uint32_t read_eeprom_32(uint16_t _index);
+void write_eeprom_32(uint16_t _index, uint32_t _data);
 void write_string_to_eeprom(uint16_t _index, char *_string);
 char *read_string_from_eeprom(uint16_t _index, uint8_t _max_len);
 
@@ -63,6 +65,12 @@ void eeprom_init()
   {
     write_string_to_eeprom(EEPROM_INDEX_FOR_AP_PASSWORD, DEFAULT_AP_PASSWORD);
   }
+
+  if (read_eeprom_32(EEPROM_INDEX_FOR_AP_IP) == 0xffffffff ||
+      read_eeprom_32(EEPROM_INDEX_FOR_AP_IP) == 0)
+  {
+    write_eeprom_32(EEPROM_INDEX_FOR_AP_IP, (uint32_t)IPAddress(DEFAULT_AP_IP));
+  }
 }
 
 // ===================================================
@@ -103,6 +111,27 @@ uint16_t read_eeprom_16(uint16_t _index)
 }
 
 void write_eeprom_16(uint16_t _index, uint16_t _data)
+{
+  if (xSemaphoreTake(xSemaphore_eeprom, portMAX_DELAY) == pdTRUE)
+  {
+    EEPROM.put(_index, _data);
+    EEPROM.commit();
+    xSemaphoreGive(xSemaphore_eeprom);
+  }
+}
+
+uint32_t read_eeprom_32(uint16_t _index)
+{
+  uint32_t _data;
+  if (xSemaphoreTake(xSemaphore_eeprom, portMAX_DELAY) == pdTRUE)
+  {
+    EEPROM.get(_index, _data);
+    xSemaphoreGive(xSemaphore_eeprom);
+  }
+  return (_data);
+}
+
+void write_eeprom_32(uint16_t _index, uint32_t _data)
 {
   if (xSemaphoreTake(xSemaphore_eeprom, portMAX_DELAY) == pdTRUE)
   {

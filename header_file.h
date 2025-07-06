@@ -20,6 +20,7 @@ constexpr uint8_t RELAY_FOR_PL_PIN = 9; // пин реле габаритных 
 #define EEPROM_INDEX_FOR_RUN_SLEEP_DELAY 6        // индекс для хранения задержки перехода в спящий режим после выключения зажигания, uint16_t
 #define EEPROM_INDEX_FOR_AP_SSID 8                // индекс для хранения имени точки доступа, 33 байта; первый байт - размер строки
 #define EEPROM_INDEX_FOR_AP_PASSWORD 41           // индекс для хранения пароля точки доступа, 65 байт; первый байт - размер строки
+#define EEPROM_INDEX_FOR_AP_IP 106                // индекс для хранения ip адреса точки доступа, uint32_t
 
 // ==== Значения по умолчанию ========================
 
@@ -42,6 +43,7 @@ constexpr uint8_t MIN_LED_BRIGHTNESS = 50;  // минимальная яркос
 
 constexpr char *DEFAULT_AP_SSID = "shSmartLight"; // имя точки доступа по умолчанию
 constexpr char *DEFAULT_AP_PASSWORD = "12345678"; // пароль точки доступа по умолчанию
+constexpr char *DEFAULT_AP_IP = "192.168.4.1";    // ip адрес точки доступа по умолчанию
 
 // ===================================================
 

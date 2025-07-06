@@ -232,7 +232,11 @@ void wifiModuleManagement(void *pvParameters)
     {
     case SLS_WIFI_CONNECT:
       WiFi.mode(WIFI_AP);
-      if (WiFi.softAP(wifi_ssid, wifi_pass))
+      WiFi.softAPConfig(IPAddress(read_eeprom_32(EEPROM_INDEX_FOR_AP_IP)),
+                        IPAddress(read_eeprom_32(EEPROM_INDEX_FOR_AP_IP)),
+                        IPAddress(255, 255, 255, 0));
+      if (WiFi.softAP(read_string_from_eeprom(EEPROM_INDEX_FOR_AP_SSID, 32),
+                      read_string_from_eeprom(EEPROM_INDEX_FOR_AP_PASSWORD, 64)))
       {
         setWiFiState(SLS_WIFI_AP);
       }
@@ -240,7 +244,8 @@ void wifiModuleManagement(void *pvParameters)
     case SLS_WIFI_OFF:
       if (WiFi.status() == WL_CONNECTED)
       {
-        WiFi.disconnect();
+        WiFi.softAPdisconnect(true);
+        WiFi.mode(WIFI_OFF);
         slsDelay = 100ul;
       }
       break;
@@ -277,8 +282,6 @@ void setup()
   semaphoreInit();
   eeprom_init();
   setCurrentMode(AutoLightMode(read_eeprom_8(EEPROM_INDEX_FOR_CURRENT_MODE)));
-  wifi_ssid = read_string_from_eeprom(EEPROM_INDEX_FOR_AP_SSID, 32);
-  wifi_pass = read_string_from_eeprom(EEPROM_INDEX_FOR_AP_PASSWORD, 64);
 
   // =================================================
 
