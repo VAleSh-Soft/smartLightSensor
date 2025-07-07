@@ -9,51 +9,51 @@
 
 // ===================================================
 
-void eeprom_init()
+void eeprom_init(bool _reset)
 {
   xSemaphore_eeprom = xSemaphoreCreateMutex();
 
   EEPROM.begin(EEPROM_SIZE);
 
   if (read_eeprom_16(EEPROM_INDEX_FOR_LIGHT_SENSOR_THRESHOLD) > 4095 ||
-      read_eeprom_16(EEPROM_INDEX_FOR_LIGHT_SENSOR_THRESHOLD) == 0)
+      read_eeprom_16(EEPROM_INDEX_FOR_LIGHT_SENSOR_THRESHOLD) == 0 || _reset)
   {
     write_eeprom_16(EEPROM_INDEX_FOR_LIGHT_SENSOR_THRESHOLD, DEFAULT_LIGHT_SENSOR_THRESHOLD);
   }
 
-  if (read_eeprom_8(EEPROM_INDEX_FOR_CURRENT_MODE) > uint8_t(SLS_MODE_AUTO))
+  if (read_eeprom_8(EEPROM_INDEX_FOR_CURRENT_MODE) > uint8_t(SLS_MODE_AUTO) || _reset)
   {
     write_eeprom_8(EEPROM_INDEX_FOR_CURRENT_MODE, uint8_t(SLS_MODE_MANUAL));
   }
 
-  if (read_eeprom_8(EEPROM_INDEX_FOR_TURN_ON_DELAY) > MAX_TURN_ON_DELAY)
+  if (read_eeprom_8(EEPROM_INDEX_FOR_TURN_ON_DELAY) > MAX_TURN_ON_DELAY || _reset)
   {
     write_eeprom_8(EEPROM_INDEX_FOR_TURN_ON_DELAY, DEFAULT_TURN_ON_DELAY);
   }
 
   if (read_eeprom_8(EEPROM_INDEX_FOR_TURN_OFF_DELAY) > MAX_TURN_OFF_DELAY ||
-      read_eeprom_8(EEPROM_INDEX_FOR_TURN_OFF_DELAY) < MIN_TURN_OFF_DELAY)
+      read_eeprom_8(EEPROM_INDEX_FOR_TURN_OFF_DELAY) < MIN_TURN_OFF_DELAY || _reset)
   {
     write_eeprom_8(EEPROM_INDEX_FOR_TURN_OFF_DELAY, DEFAULT_TURN_OFF_DELAY);
   }
 
-  if (read_eeprom_16(EEPROM_INDEX_FOR_RUN_SLEEP_DELAY) > MAX_RUN_SLEEP_DELAY)
+  if (read_eeprom_16(EEPROM_INDEX_FOR_RUN_SLEEP_DELAY) > MAX_RUN_SLEEP_DELAY || _reset)
   {
     write_eeprom_16(EEPROM_INDEX_FOR_RUN_SLEEP_DELAY, DEFAULT_RUN_SLEEP_DELAY);
   }
 
-  if (read_eeprom_8(EEPROM_INDEX_FOR_AP_SSID) > 32)
+  if (read_eeprom_8(EEPROM_INDEX_FOR_AP_SSID) > 32 || _reset)
   {
     write_string_to_eeprom(EEPROM_INDEX_FOR_AP_SSID, DEFAULT_AP_SSID);
   }
 
-  if (read_eeprom_8(EEPROM_INDEX_FOR_AP_PASSWORD) > 64)
+  if (read_eeprom_8(EEPROM_INDEX_FOR_AP_PASSWORD) > 64 || _reset)
   {
     write_string_to_eeprom(EEPROM_INDEX_FOR_AP_PASSWORD, DEFAULT_AP_PASSWORD);
   }
 
   if (read_eeprom_32(EEPROM_INDEX_FOR_AP_IP) == 0xffffffff ||
-      read_eeprom_32(EEPROM_INDEX_FOR_AP_IP) == 0)
+      read_eeprom_32(EEPROM_INDEX_FOR_AP_IP) == 0 || _reset)
   {
     write_eeprom_32(EEPROM_INDEX_FOR_AP_IP, (uint32_t)IPAddress(DEFAULT_AP_IP));
   }

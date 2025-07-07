@@ -141,7 +141,7 @@ void wifiModuleManagement(void *pvParameters);
 
 // ==== _eeprom.h ====================================
 
-void eeprom_init();
+void eeprom_init(bool _reset = false);
 uint8_t read_eeprom_8(uint16_t _index);
 void write_eeprom_8(uint16_t _index, uint8_t _data);
 uint16_t read_eeprom_16(uint16_t _index);
