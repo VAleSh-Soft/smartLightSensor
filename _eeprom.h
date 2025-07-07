@@ -11,18 +11,6 @@ xSemaphoreHandle xSemaphore_eeprom = NULL;
 
 // ===================================================
 
-void eeprom_init();
-uint8_t read_eeprom_8(uint16_t _index);
-void write_eeprom_8(uint16_t _index, uint8_t _data);
-uint16_t read_eeprom_16(uint16_t _index);
-void write_eeprom_16(uint16_t _index, uint16_t _data);
-uint32_t read_eeprom_32(uint16_t _index);
-void write_eeprom_32(uint16_t _index, uint32_t _data);
-void write_string_to_eeprom(uint16_t _index, char *_string);
-char *read_string_from_eeprom(uint16_t _index, uint8_t _max_len);
-
-// ===================================================
-
 void eeprom_init()
 {
   xSemaphore_eeprom = xSemaphoreCreateMutex();

@@ -5,6 +5,9 @@
 
 // ==== Настройки ====================================
 
+#define USE_RELAY_FOR_DRL 0  // использовать реле для ходовых огней; оно будет включаться при старте двигателя
+#define USE_DRL_MANAGEMENT 0 // управлять ходовыми огнями; это нужно, если ходовые огни не отключаются автоматически при включении ближнего света
+
 constexpr uint8_t LIGHT_SENSOR_PIN = 4; // пин датчика освещенности
 constexpr uint8_t IGNITION_PIN = 5;     // пин, на который приходит сигнал с линии зажигания; при появлении на этом пине высокого уровня МК выходит из глубокого сна, поэтому для esp32c3 допустимые значения 0..5
 constexpr uint8_t ENGINE_RUN_PIN = 6;   // пин, на который приходит сигнал с вывода D генератора или HIGH при запущенном двигателе
@@ -12,6 +15,11 @@ constexpr uint8_t BTN_MODE_PIN = 3;     // пин кнопки режима ра
 constexpr uint8_t LEDS_DATA_PIN = 7;    // пин выхода для светодиодов
 constexpr uint8_t RELAY_FOR_LB_PIN = 8; // пин реле ближнего света
 constexpr uint8_t RELAY_FOR_PL_PIN = 9; // пин реле габаритных огней
+#if USE_RELAY_FOR_DRL
+constexpr uint8_t RELAY_FOR_DRL_PIN = 10; // пин реле ходовых огней
+#endif
+
+// ==== Переменные ===================================
 
 #define EEPROM_INDEX_FOR_LIGHT_SENSOR_THRESHOLD 1 // индекс для хранения порога включения ближнего света, uint16_t
 #define EEPROM_INDEX_FOR_CURRENT_MODE 3           // индекс для хранения текущего режима работы, uint8_t
@@ -58,6 +66,10 @@ enum RelayState : uint8_t
   SLS_RELAY_ALL, // все реле
   SLS_RELAY_LB,  // реле ближнего света
   SLS_RELAY_PL   // реле габаритных огней
+#if USE_RELAY_FOR_DRL
+  ,
+  SLS_RELAY_DRL // реле ходовых огней
+#endif
 };
 
 enum WiFiState : uint8_t
@@ -85,19 +97,19 @@ CRGB leds[LEDS_NUM]; // индикаторный светодиод;
                       *                                синий цвет;
                       */
 
-// ===================================================
+// ==== _function.h ==================================
 
 void setCurrentMode(AutoLightMode _mode);
 AutoLightMode getCurrentMode();
 void setEngineRunFlag(bool _flag);
 bool getEngineRunFlag();
-void setRelayState(RelayState _rel, uint8_t state);
+void setRelayState(RelayState _rel, uint8_t _state);
 uint8_t getRelayState(RelayState _rel);
 void setWiFiState(WiFiState _state);
 WiFiState getWiFiState();
 void semaphoreInit();
 
-// ===================================================
+// ==== _tasks.h =====================================
 
 // опрос кнопки
 void btnCheck(void *pvParameters);
@@ -111,3 +123,16 @@ void engineRunCheck(void *pvParameters);
 void startSleepMode(void *pvParameters);
 // управление WiFi
 void wifiModuleManagement(void *pvParameters);
+
+// ==== _eeprom.h ====================================
+
+void eeprom_init();
+uint8_t read_eeprom_8(uint16_t _index);
+void write_eeprom_8(uint16_t _index, uint8_t _data);
+uint16_t read_eeprom_16(uint16_t _index);
+void write_eeprom_16(uint16_t _index, uint16_t _data);
+uint32_t read_eeprom_32(uint16_t _index);
+void write_eeprom_32(uint16_t _index, uint32_t _data);
+void write_string_to_eeprom(uint16_t _index, char *_string);
+char *read_string_from_eeprom(uint16_t _index, uint8_t _max_len);
+

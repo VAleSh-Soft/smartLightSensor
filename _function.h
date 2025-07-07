@@ -5,7 +5,7 @@
 
 // ===================================================
 
-bool engine_run_flag = false;    // флаг запуска двигателя
+bool engine_run_flag = false;        // флаг запуска двигателя
 WiFiState wifi_state = SLS_WIFI_OFF; // состояние WiFi
 
 // ===================================================
@@ -48,18 +48,32 @@ bool getEngineRunFlag()
   return _flag;
 }
 
-void setRelayState(RelayState _rel, uint8_t state)
+void setRelayState(RelayState _rel, uint8_t _state)
 {
   if (xSemaphoreTake(xSemaphore_relays, portMAX_DELAY) == pdTRUE)
   {
-    if (_rel != SLS_RELAY_LB)
+    if (_rel == SLS_RELAY_PL || _rel == SLS_RELAY_ALL)
     {
-      digitalWrite(RELAY_FOR_PL_PIN, state);
+      digitalWrite(RELAY_FOR_PL_PIN, _state);
     }
-    if (_rel != SLS_RELAY_PL)
+    if (_rel == SLS_RELAY_LB || _rel == SLS_RELAY_ALL)
     {
-      digitalWrite(RELAY_FOR_LB_PIN, state);
+      digitalWrite(RELAY_FOR_LB_PIN, _state);
     }
+#if USE_RELAY_FOR_DRL
+#if USE_DRL_MANAGEMENT
+    if (_rel == SLS_RELAY_DRL)
+    {
+      digitalWrite(RELAY_FOR_DRL_PIN, _state);
+    }
+    else
+    {
+      digitalWrite(RELAY_FOR_DRL_PIN, !digitalRead(RELAY_FOR_PL_PIN));
+    }
+#else
+    digitalWrite(RELAY_FOR_DRL_PIN, getEngineRunFlag());
+#endif
+#endif
     xSemaphoreGive(xSemaphore_relays);
   }
 }
@@ -77,6 +91,11 @@ uint8_t getRelayState(RelayState _rel)
     case SLS_RELAY_PL:
       _state = digitalRead(RELAY_FOR_PL_PIN);
       break;
+#if USE_RELAY_FOR_DRL
+      case SLS_RELAY_DRL:
+      _state = digitalRead(RELAY_FOR_DRL_PIN);
+      break;
+#endif
     default:
       break;
     }
