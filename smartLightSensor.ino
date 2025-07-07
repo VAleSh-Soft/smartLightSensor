@@ -28,7 +28,7 @@ void setup()
 
   semaphoreInit();
   eeprom_init();
-  setCurrentMode(AutoLightMode(read_eeprom_8(EEPROM_INDEX_FOR_CURRENT_MODE)));
+  setCurrentMode(AutoLightSensorMode(read_eeprom_8(EEPROM_INDEX_FOR_CURRENT_MODE)));
 
   // =================================================
 

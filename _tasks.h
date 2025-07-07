@@ -102,7 +102,7 @@ void lightSensorCheck(void *pvParameters)
     {
       if (sensor_data <= t)
       { // если уровень снизился до порога включения БС, то включить БС и сбросить флаг отключения БС
-        setRelayState(SLS_RELAY_ALL, HIGH);
+        setRelayState(SLS_RELAY_ALL, true);
         timer = false;
       }
       else if (sensor_data > (t + LIGHT_SENSOR_THRESHOLD_HISTERESIS))
@@ -119,7 +119,7 @@ void lightSensorCheck(void *pvParameters)
       {
         if (timer_counter >= read_eeprom_8(EEPROM_INDEX_FOR_TURN_OFF_DELAY) * 1000ul / SLS_DELAY)
         {
-          setRelayState(SLS_RELAY_ALL, LOW);
+          setRelayState(SLS_RELAY_ALL, false);
           timer = false;
         }
         else
@@ -130,7 +130,7 @@ void lightSensorCheck(void *pvParameters)
     }
     else if (getRelayState(SLS_RELAY_LB))
     {
-      setRelayState(SLS_RELAY_ALL, LOW);
+      setRelayState(SLS_RELAY_ALL, false);
     }
 
     // и здесь же управление яркостью светодиода - вне зависимость от режима работы

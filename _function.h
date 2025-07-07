@@ -6,26 +6,18 @@
 // ===================================================
 
 bool engine_run_flag = false;        // флаг запуска двигателя
-WiFiState wifi_state = SLS_WIFI_OFF; // состояние WiFi
+WiFiModuleState wifi_state = SLS_WIFI_OFF; // состояние WiFi
 
 // ===================================================
 
-xTaskHandle xTask_leds;
-
-xSemaphoreHandle xSemaphore_relays = NULL;
-xSemaphoreHandle xSemaphore_eng_run = NULL;
-xSemaphoreHandle xSemaphore_wifi = NULL;
-
-// ===================================================
-
-void setCurrentMode(AutoLightMode _mode)
+void setCurrentMode(AutoLightSensorMode _mode)
 {
   write_eeprom_8(EEPROM_INDEX_FOR_CURRENT_MODE, uint8_t(_mode));
 }
 
-AutoLightMode getCurrentMode()
+AutoLightSensorMode getCurrentMode()
 {
-  return (AutoLightMode)read_eeprom_8(EEPROM_INDEX_FOR_CURRENT_MODE);
+  return (AutoLightSensorMode)read_eeprom_8(EEPROM_INDEX_FOR_CURRENT_MODE);
 }
 
 void setEngineRunFlag(bool _flag)
@@ -48,30 +40,38 @@ bool getEngineRunFlag()
   return _flag;
 }
 
-void setRelayState(RelayState _rel, uint8_t _state)
+void setRelayState(RelayState _rel, bool _state)
 {
   if (xSemaphoreTake(xSemaphore_relays, portMAX_DELAY) == pdTRUE)
   {
     if (_rel == SLS_RELAY_PL || _rel == SLS_RELAY_ALL)
     {
-      digitalWrite(RELAY_FOR_PL_PIN, _state);
+      digitalWrite(RELAY_FOR_PL_PIN,
+                   (CONTROL_LEVEL_FOR_PL ? (uint8_t)_state : (uint8_t)!_state));
     }
     if (_rel == SLS_RELAY_LB || _rel == SLS_RELAY_ALL)
     {
-      digitalWrite(RELAY_FOR_LB_PIN, _state);
+      digitalWrite(RELAY_FOR_LB_PIN,
+                   (CONTROL_LEVEL_FOR_LB ? (uint8_t)_state : (uint8_t)!_state));
     }
 #if USE_RELAY_FOR_DRL
 #if USE_DRL_MANAGEMENT
     if (_rel == SLS_RELAY_DRL)
     {
-      digitalWrite(RELAY_FOR_DRL_PIN, _state);
+      digitalWrite(RELAY_FOR_DRL_PIN,
+                   (CONTROL_LEVEL_FOR_DRL ? (uint8_t)_state : (uint8_t)!_state));
     }
     else
     {
-      digitalWrite(RELAY_FOR_DRL_PIN, !digitalRead(RELAY_FOR_PL_PIN));
+      bool x = (digitalRead(RELAY_FOR_PL_PIN) == CONTROL_LEVEL_FOR_PL);
+      digitalWrite(RELAY_FOR_DRL_PIN,
+                   (CONTROL_LEVEL_FOR_DRL ? (uint8_t)!x : (uint8_t)x));
     }
 #else
-    digitalWrite(RELAY_FOR_DRL_PIN, getEngineRunFlag());
+    if (getEngineRunFlag())
+    {
+      digitalWrite(RELAY_FOR_DRL_PIN, CONTROL_LEVEL_FOR_DRL);
+    }
 #endif
 #endif
     xSemaphoreGive(xSemaphore_relays);
@@ -86,14 +86,14 @@ uint8_t getRelayState(RelayState _rel)
     switch (_rel)
     {
     case SLS_RELAY_LB:
-      _state = digitalRead(RELAY_FOR_LB_PIN);
+      _state = (digitalRead(RELAY_FOR_LB_PIN) == CONTROL_LEVEL_FOR_LB);
       break;
     case SLS_RELAY_PL:
-      _state = digitalRead(RELAY_FOR_PL_PIN);
+      _state = (digitalRead(RELAY_FOR_PL_PIN) == CONTROL_LEVEL_FOR_PL);
       break;
 #if USE_RELAY_FOR_DRL
-      case SLS_RELAY_DRL:
-      _state = digitalRead(RELAY_FOR_DRL_PIN);
+    case SLS_RELAY_DRL:
+      _state = (digitalRead(RELAY_FOR_DRL_PIN) == CONTROL_LEVEL_FOR_DRL);
       break;
 #endif
     default:
@@ -104,7 +104,7 @@ uint8_t getRelayState(RelayState _rel)
   return _state;
 }
 
-void setWiFiState(WiFiState _state)
+void setWiFiState(WiFiModuleState _state)
 {
   if (xSemaphoreTake(xSemaphore_wifi, portMAX_DELAY) == pdTRUE)
   {
@@ -113,9 +113,9 @@ void setWiFiState(WiFiState _state)
   }
 }
 
-WiFiState getWiFiState()
+WiFiModuleState getWiFiState()
 {
-  WiFiState _state;
+  WiFiModuleState _state;
   {
     _state = wifi_state;
     xSemaphoreGive(xSemaphore_wifi);

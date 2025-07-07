@@ -7,8 +7,6 @@
 
 #define EEPROM_SIZE 128
 
-xSemaphoreHandle xSemaphore_eeprom = NULL;
-
 // ===================================================
 
 void eeprom_init()

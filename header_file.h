@@ -19,7 +19,13 @@ constexpr uint8_t RELAY_FOR_PL_PIN = 9; // пин реле габаритных 
 constexpr uint8_t RELAY_FOR_DRL_PIN = 10; // пин реле ходовых огней
 #endif
 
-// ==== Переменные ===================================
+constexpr uint8_t CONTROL_LEVEL_FOR_LB = HIGH; // уровень управления реле ближнего света; HIGH или LOW
+constexpr uint8_t CONTROL_LEVEL_FOR_PL = HIGH; // уровень управления реле габаритных огней; HIGH или LOW
+#if USE_RELAY_FOR_DRL
+constexpr uint8_t CONTROL_LEVEL_FOR_DRL = HIGH; // уровень управления реле ходовых огней; HIGH или LOW
+#endif
+
+// ==== EEPROM =======================================
 
 #define EEPROM_INDEX_FOR_LIGHT_SENSOR_THRESHOLD 1 // индекс для хранения порога включения ближнего света, uint16_t
 #define EEPROM_INDEX_FOR_CURRENT_MODE 3           // индекс для хранения текущего режима работы, uint8_t
@@ -55,7 +61,7 @@ constexpr char *DEFAULT_AP_IP = "192.168.4.1";    // ip адрес точки д
 
 // ===================================================
 
-enum AutoLightMode : uint8_t
+enum AutoLightSensorMode : uint8_t
 {
   SLS_MODE_MANUAL, // ручной режим
   SLS_MODE_AUTO    // автоматический режим
@@ -72,7 +78,7 @@ enum RelayState : uint8_t
 #endif
 };
 
-enum WiFiState : uint8_t
+enum WiFiModuleState : uint8_t
 {
   SLS_WIFI_OFF,     // WiFi отключен
   SLS_WIFI_CONNECT, // включение WiFi
@@ -97,16 +103,25 @@ CRGB leds[LEDS_NUM]; // индикаторный светодиод;
                       *                                синий цвет;
                       */
 
+// ===================================================
+
+xTaskHandle xTask_leds;
+
+xSemaphoreHandle xSemaphore_relays = NULL;
+xSemaphoreHandle xSemaphore_eng_run = NULL;
+xSemaphoreHandle xSemaphore_wifi = NULL;
+xSemaphoreHandle xSemaphore_eeprom = NULL;
+
 // ==== _function.h ==================================
 
-void setCurrentMode(AutoLightMode _mode);
-AutoLightMode getCurrentMode();
+void setCurrentMode(AutoLightSensorMode _mode);
+AutoLightSensorMode getCurrentMode();
 void setEngineRunFlag(bool _flag);
 bool getEngineRunFlag();
-void setRelayState(RelayState _rel, uint8_t _state);
+void setRelayState(RelayState _rel, bool _state);
 uint8_t getRelayState(RelayState _rel);
-void setWiFiState(WiFiState _state);
-WiFiState getWiFiState();
+void setWiFiState(WiFiModuleState _state);
+WiFiModuleState getWiFiState();
 void semaphoreInit();
 
 // ==== _tasks.h =====================================
