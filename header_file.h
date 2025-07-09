@@ -1,5 +1,6 @@
 #pragma once
 
+#include <WebServer.h>
 #include <shButton.h>
 #include <FastLED.h>
 
@@ -112,6 +113,11 @@ xSemaphoreHandle xSemaphore_eng_run = NULL;
 xSemaphoreHandle xSemaphore_wifi = NULL;
 xSemaphoreHandle xSemaphore_eeprom = NULL;
 
+// ===================================================
+
+// Web интерфейс для устройства
+WebServer HTTP(80);
+
 // ==== _function.h ==================================
 
 void setCurrentMode(AutoLightSensorMode _mode);
@@ -150,4 +156,11 @@ uint32_t read_eeprom_32(uint16_t _index);
 void write_eeprom_32(uint16_t _index, uint32_t _data);
 void write_string_to_eeprom(uint16_t _index, char *_string);
 char *read_string_from_eeprom(uint16_t _index, uint8_t _max_len);
+
+// ==== _http.h ======================================
+
+void http_init();
+void handleGetConfigPage();
+void handleGetConfig();
+void handleSetConfig();
 

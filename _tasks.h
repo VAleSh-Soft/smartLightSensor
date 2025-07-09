@@ -248,7 +248,7 @@ void wifiModuleManagement(void *pvParameters)
       }
       break;
     case SLS_WIFI_AP:
-      // HTTP.handleClient();
+      HTTP.handleClient();
       slsDelay = 1ul; // в режиме точки доступа крутим быстро для нормальной реакции сервера
       break;
     }
