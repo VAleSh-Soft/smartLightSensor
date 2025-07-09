@@ -3,6 +3,7 @@
 #include "_eeprom.h"
 #include "_function.h"
 #include "_tasks.h"
+#include "_http.h"
 
 // ===================================================
 

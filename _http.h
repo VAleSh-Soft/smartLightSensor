@@ -1,6 +1,7 @@
 #pragma once
 
 #include "header_file.h"
+#include "extras/c_page.h"
 
 /*
  * строка для отправки на Web-страницу
