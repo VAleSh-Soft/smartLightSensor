@@ -116,18 +116,12 @@ void setWiFiState(WiFiModuleState _state)
 WiFiModuleState getWiFiState()
 {
   WiFiModuleState _state;
+  if (xSemaphoreTake(xSemaphore_wifi, portMAX_DELAY) == pdTRUE)
   {
     _state = wifi_state;
     xSemaphoreGive(xSemaphore_wifi);
   }
   return _state;
-}
-
-void semaphoreInit()
-{
-  xSemaphore_relays = xSemaphoreCreateMutex();
-  xSemaphore_eng_run = xSemaphoreCreateMutex();
-  xSemaphore_wifi = xSemaphoreCreateMutex();
 }
 
 // ===================================================

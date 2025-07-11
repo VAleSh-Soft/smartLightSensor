@@ -25,7 +25,7 @@ void http_init()
   HTTP.onNotFound([]()
                   { HTTP.send(404, "text/plan", F("404. File not found.")); });
 
-  HTTP.begin();
+  // HTTP.begin();
 }
 
 void handleGetConfigPage()

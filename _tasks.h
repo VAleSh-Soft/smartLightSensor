@@ -237,6 +237,7 @@ void wifiModuleManagement(void *pvParameters)
                       read_string_from_eeprom(EEPROM_INDEX_FOR_AP_PASSWORD, 64)))
       {
         setWiFiState(SLS_WIFI_AP);
+        HTTP.begin();
       }
       break;
     case SLS_WIFI_OFF:
@@ -244,6 +245,7 @@ void wifiModuleManagement(void *pvParameters)
       {
         WiFi.softAPdisconnect(true);
         WiFi.mode(WIFI_OFF);
+        HTTP.stop();
         slsDelay = 100ul;
       }
       break;

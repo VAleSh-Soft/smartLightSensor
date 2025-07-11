@@ -108,10 +108,10 @@ CRGB leds[LEDS_NUM]; // индикаторный светодиод;
 
 xTaskHandle xTask_leds;
 
-xSemaphoreHandle xSemaphore_relays = NULL;
-xSemaphoreHandle xSemaphore_eng_run = NULL;
-xSemaphoreHandle xSemaphore_wifi = NULL;
-xSemaphoreHandle xSemaphore_eeprom = NULL;
+xSemaphoreHandle xSemaphore_relays = xSemaphoreCreateMutex();
+xSemaphoreHandle xSemaphore_eng_run  = xSemaphoreCreateMutex();
+xSemaphoreHandle xSemaphore_wifi  = xSemaphoreCreateMutex();
+xSemaphoreHandle xSemaphore_eeprom  = xSemaphoreCreateMutex();
 
 // ===================================================
 
@@ -128,7 +128,6 @@ void setRelayState(RelayState _rel, bool _state);
 uint8_t getRelayState(RelayState _rel);
 void setWiFiState(WiFiModuleState _state);
 WiFiModuleState getWiFiState();
-void semaphoreInit();
 
 // ==== _tasks.h =====================================
 

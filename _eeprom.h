@@ -11,8 +11,6 @@
 
 void eeprom_init(bool _reset)
 {
-  xSemaphore_eeprom = xSemaphoreCreateMutex();
-
   EEPROM.begin(EEPROM_SIZE);
 
   if (read_eeprom_16(EEPROM_INDEX_FOR_LIGHT_SENSOR_THRESHOLD) > 4095 ||
