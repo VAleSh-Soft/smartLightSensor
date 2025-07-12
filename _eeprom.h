@@ -125,7 +125,7 @@ void write_eeprom_32(uint16_t _index, uint32_t _data)
   }
 }
 
-void write_string_to_eeprom(uint16_t _index, char *_string)
+void write_string_to_eeprom(uint16_t _index, const char *_string)
 {
   uint8_t len = strlen(_string);
   if (xSemaphoreTake(xSemaphore_eeprom, portMAX_DELAY) == pdTRUE)
@@ -142,7 +142,7 @@ void write_string_to_eeprom(uint16_t _index, char *_string)
   }
 }
 
-char *read_string_from_eeprom(uint16_t _index, uint8_t _max_len)
+char *read_string_from_eeprom(uint16_t _index, const uint8_t _max_len)
 {
   if (xSemaphoreTake(xSemaphore_eeprom, portMAX_DELAY) == pdTRUE)
   {
