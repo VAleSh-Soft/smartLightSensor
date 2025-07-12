@@ -17,14 +17,15 @@ void http_init()
 {
   // запрос стартовой страницы
   HTTP.on("/", HTTP_GET, handleGetConfigPage);
-  // запрос текущих настроек
-  HTTP.on("/getconfig", HTTP_GET, handleGetConfig);
-  // сохранение настроек
-  HTTP.on("/setconfig", HTTP_POST, []()
-          { handleSetConfig(); });
   // ответ 404
   HTTP.onNotFound([]()
                   { HTTP.send(404, "text/plan", F("404. Ooops!!! File not found.")); });
+  // запрос текущих настроек
+  HTTP.on("/_getconfig", HTTP_GET, handleGetConfig);
+  // сохранение настроек
+  HTTP.on("/_setconfig", HTTP_POST, handleSetConfig);
+  // закрытие вкладки браузера и отключение WiFi
+  HTTP.on("/_close", HTTP_GET, handleClose);
 }
 
 void handleGetConfigPage()
@@ -77,20 +78,24 @@ void handleSetConfig()
   }
   else
   {
-    const char *str = doc["ap_ip"].as<String>().c_str();
-    Serial.println("IP: " + String(str));
-    write_eeprom_32(EEPROM_INDEX_FOR_AP_IP, (uint32_t)IPAddress(str));
-    const char *str1 = doc["ap_ssid"].as<String>().c_str();
-    Serial.println("SSID: " + String(str1));
-    write_string_to_eeprom(EEPROM_INDEX_FOR_AP_SSID, str1);
-    const char *str2 = doc["ap_pass"].as<String>().c_str();
-    Serial.println("PASS: " + String(str2));
-    write_string_to_eeprom(EEPROM_INDEX_FOR_AP_PASSWORD, str2);
+    const char *_ip = doc["ap_ip"].as<String>().c_str();
+    write_eeprom_32(EEPROM_INDEX_FOR_AP_IP, (uint32_t)IPAddress(_ip));
+    write_string_to_eeprom(EEPROM_INDEX_FOR_AP_SSID, doc["ap_ssid"].as<String>().c_str());
+    write_string_to_eeprom(EEPROM_INDEX_FOR_AP_PASSWORD, doc["ap_pass"].as<String>().c_str());
     write_eeprom_8(EEPROM_INDEX_FOR_TURN_ON_DELAY, doc["turn_on_delay"].as<uint8_t>());
     write_eeprom_8(EEPROM_INDEX_FOR_TURN_OFF_DELAY, doc["thresh_delay"].as<uint8_t>());
     write_eeprom_8(EEPROM_INDEX_FOR_RUN_SLEEP_DELAY, doc["turn_off_delay"].as<uint8_t>());
     write_eeprom_16(EEPROM_INDEX_FOR_LIGHT_SENSOR_THRESHOLD, doc["threshold"].as<uint16_t>() * 40);
-    HTTP.send(200, "text/html", F("<META http-equiv='refresh' content='1;URL=/'><p align='center'>Save settings...</p>"));
+    HTTP.send(200, "text/html", F("<META http-equiv='refresh' content='1;URL=/_close'><p align='center'>Save settings...</p>"));
   }
+}
+
+void handleClose()
+{
+  static const char close_page[] PROGMEM =
+      R"(<!DOCTYPE html> <html> <body> <script> function closePage() { var request = new XMLHttpRequest(); request.open('GET', '/_getconfig', true); request.onload = function () { window.close(); }; request.send(); } document.addEventListener("DOMContentLoaded", closePage); </script> </body> </html>)";
+
+  HTTP.send(200, "text/html", FPSTR(close_page));
+
   setWiFiState(SLS_WIFI_OFF);
 }

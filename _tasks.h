@@ -236,17 +236,17 @@ void wifiModuleManagement(void *pvParameters)
       if (WiFi.softAP(read_string_from_eeprom(EEPROM_INDEX_FOR_AP_SSID, 32),
                       read_string_from_eeprom(EEPROM_INDEX_FOR_AP_PASSWORD, 64)))
       {
-        setWiFiState(SLS_WIFI_AP);
         slsDelay = 1ul; // в режиме точки доступа крутим быстро для нормальной реакции сервера
         HTTP.begin();
+        setWiFiState(SLS_WIFI_AP);
       }
       break;
     case SLS_WIFI_OFF:
       if (WiFi.getMode() != WIFI_OFF)
       {
+        HTTP.stop();
         WiFi.softAPdisconnect(true);
         WiFi.mode(WIFI_OFF);
-        HTTP.stop();
         slsDelay = 100ul;
       }
       break;

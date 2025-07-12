@@ -27,9 +27,11 @@ void setup()
 
   // =================================================
 
-  eeprom_init(!digitalRead(BTN_MODE_PIN)); // при зажатой при старте кнопке настройки сбрасываются к настройкам по умолчанию
-  setCurrentMode(AutoLightSensorMode(read_eeprom_8(EEPROM_INDEX_FOR_CURRENT_MODE)));
   http_init();
+  eeprom_init(!digitalRead(BTN_MODE_PIN)); // при зажатой при старте кнопке настройки сбрасываются к настройкам по умолчанию
+  while (!digitalRead(BTN_MODE_PIN)); // ждем отпускания кнопки, если она была нажата при включении
+  
+  setCurrentMode(AutoLightSensorMode(read_eeprom_8(EEPROM_INDEX_FOR_CURRENT_MODE)));
 
   Serial.println("AP_SSID: " + String(read_string_from_eeprom(EEPROM_INDEX_FOR_AP_SSID, 32)));
   Serial.println("AP_PASS: " + String(read_string_from_eeprom(EEPROM_INDEX_FOR_AP_PASSWORD, 64)));

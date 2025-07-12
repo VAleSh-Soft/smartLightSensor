@@ -162,4 +162,4 @@ void http_init();
 void handleGetConfigPage();
 void handleGetConfig();
 void handleSetConfig();
-
+void handleClose();
