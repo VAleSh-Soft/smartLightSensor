@@ -13,6 +13,22 @@
  * {"ap_ssid":"test","ap_pass":"12345678","ap_ip":"192.168.4.1","threshold":90,"turn_on_delay":3,"run_sleep_delay":20,"thresh_delay":30}
  */
 
+// ===================================================
+
+ const String ap_ssid = "ap_ssid";
+ const String ap_pass = "ap_pass";
+ const String ap_ip = "ap_ip";
+ const String threshold = "threshold";
+ const String turn_on_delay = "turn_on_delay";
+ const String max_turn_on_delay = "max_turn_on_delay";
+ const String run_sleep_delay = "run_sleep_delay";
+ const String max_run_sleep_delay = "max_run_sleep_delay";
+ const String thresh_delay = "thresh_delay";
+ const String max_thresh_delay = "max_thresh_delay";
+ const String min_thresh_delay = "min_thresh_delay";
+
+// ===================================================
+
 void http_init()
 {
   // запрос стартовой страницы
@@ -37,17 +53,17 @@ void handleGetConfig()
 {
   DynamicJsonDocument doc(1024);
 
-  doc["ap_ip"] = IPAddress(read_eeprom_32(EEPROM_INDEX_FOR_AP_IP)).toString();
-  doc["ap_ssid"] = read_string_from_eeprom(EEPROM_INDEX_FOR_AP_SSID, 32);
-  doc["ap_pass"] = read_string_from_eeprom(EEPROM_INDEX_FOR_AP_PASSWORD, 64);
-  doc["turn_on_delay"] = read_eeprom_8(EEPROM_INDEX_FOR_TURN_ON_DELAY);
-  doc["max_turn_on_delay"] = MAX_TURN_ON_DELAY;
-  doc["thresh_delay"] = read_eeprom_8(EEPROM_INDEX_FOR_THRESH_DELAY);
-  doc["max_thresh_delay"] = MAX_THRESH_DELAY;
-  doc["min_thresh_delay"] = MIN_THRESH_DELAY;
-  doc["run_sleep_delay"] = read_eeprom_8(EEPROM_INDEX_FOR_RUN_SLEEP_DELAY);
-  doc["max_run_sleep_delay"] = MAX_RUN_SLEEP_DELAY;
-  doc["threshold"] = read_eeprom_16(EEPROM_INDEX_FOR_LIGHT_SENSOR_THRESHOLD) / 40;
+  doc[ap_ip] = IPAddress(read_eeprom_32(EEPROM_INDEX_FOR_AP_IP)).toString();
+  doc[ap_ssid] = read_string_from_eeprom(EEPROM_INDEX_FOR_AP_SSID, 32);
+  doc[ap_pass] = read_string_from_eeprom(EEPROM_INDEX_FOR_AP_PASSWORD, 64);
+  doc[turn_on_delay] = read_eeprom_8(EEPROM_INDEX_FOR_TURN_ON_DELAY);
+  doc[max_turn_on_delay] = MAX_TURN_ON_DELAY;
+  doc[thresh_delay] = read_eeprom_8(EEPROM_INDEX_FOR_THRESH_DELAY);
+  doc[max_thresh_delay] = MAX_THRESH_DELAY;
+  doc[min_thresh_delay] = MIN_THRESH_DELAY;
+  doc[run_sleep_delay] = read_eeprom_8(EEPROM_INDEX_FOR_RUN_SLEEP_DELAY);
+  doc[max_run_sleep_delay] = MAX_RUN_SLEEP_DELAY;
+  doc[threshold] = read_eeprom_16(EEPROM_INDEX_FOR_LIGHT_SENSOR_THRESHOLD) / 40;
 
   String _res = "";
   serializeJson(doc, _res);
@@ -78,14 +94,14 @@ void handleSetConfig()
   }
   else
   {
-    const char *_ip = doc["ap_ip"].as<String>().c_str();
+    const char *_ip = doc[ap_ip].as<String>().c_str();
     write_eeprom_32(EEPROM_INDEX_FOR_AP_IP, (uint32_t)IPAddress(_ip));
-    write_string_to_eeprom(EEPROM_INDEX_FOR_AP_SSID, doc["ap_ssid"].as<String>().c_str());
-    write_string_to_eeprom(EEPROM_INDEX_FOR_AP_PASSWORD, doc["ap_pass"].as<String>().c_str());
-    write_eeprom_8(EEPROM_INDEX_FOR_TURN_ON_DELAY, doc["turn_on_delay"].as<uint8_t>());
-    write_eeprom_8(EEPROM_INDEX_FOR_THRESH_DELAY, doc["thresh_delay"].as<uint8_t>());
-    write_eeprom_8(EEPROM_INDEX_FOR_RUN_SLEEP_DELAY, doc["run_sleep_delay"].as<uint8_t>());
-    write_eeprom_16(EEPROM_INDEX_FOR_LIGHT_SENSOR_THRESHOLD, doc["threshold"].as<uint16_t>() * 40);
+    write_string_to_eeprom(EEPROM_INDEX_FOR_AP_SSID, doc[ap_ssid].as<String>().c_str());
+    write_string_to_eeprom(EEPROM_INDEX_FOR_AP_PASSWORD, doc[ap_pass].as<String>().c_str());
+    write_eeprom_8(EEPROM_INDEX_FOR_TURN_ON_DELAY, doc[turn_on_delay].as<uint8_t>());
+    write_eeprom_8(EEPROM_INDEX_FOR_THRESH_DELAY, doc[thresh_delay].as<uint8_t>());
+    write_eeprom_8(EEPROM_INDEX_FOR_RUN_SLEEP_DELAY, doc[run_sleep_delay].as<uint8_t>());
+    write_eeprom_16(EEPROM_INDEX_FOR_LIGHT_SENSOR_THRESHOLD, doc[threshold].as<uint16_t>() * 40);
     HTTP.send(200, "text/html", F("<META http-equiv='refresh' content='1;URL=/_close'><p align='center'>Save settings...</p>"));
   }
 }

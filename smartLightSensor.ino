@@ -31,8 +31,9 @@ void setup()
 
   http_init();
   eeprom_init(!digitalRead(BTN_MODE_PIN)); // при зажатой при старте кнопке настройки сбрасываются к настройкам по умолчанию
-  while (!digitalRead(BTN_MODE_PIN)); // ждем отпускания кнопки, если она была нажата при включении
-  
+  while (!digitalRead(BTN_MODE_PIN))       // ждем отпускания кнопки, если она была нажата при включении
+    ;
+
   setCurrentMode(AutoLightSensorMode(read_eeprom_8(EEPROM_INDEX_FOR_CURRENT_MODE)));
 
   // =================================================

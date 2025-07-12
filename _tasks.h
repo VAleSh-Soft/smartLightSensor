@@ -247,7 +247,7 @@ void wifiModuleManagement(void *pvParameters)
         HTTP.stop();
         WiFi.softAPdisconnect(true);
         WiFi.mode(WIFI_OFF);
-        slsDelay = 100ul;
+        slsDelay = 100ul; // если точка доступа отключена, замедляемся
       }
       break;
     case SLS_WIFI_AP:
