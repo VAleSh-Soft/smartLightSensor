@@ -31,6 +31,11 @@ void setup()
   setCurrentMode(AutoLightSensorMode(read_eeprom_8(EEPROM_INDEX_FOR_CURRENT_MODE)));
   http_init();
 
+  Serial.println("AP_SSID: " + String(read_string_from_eeprom(EEPROM_INDEX_FOR_AP_SSID, 32)));
+  Serial.println("AP_PASS: " + String(read_string_from_eeprom(EEPROM_INDEX_FOR_AP_PASSWORD, 64)));
+  Serial.println("AP_IP: " + IPAddress(read_eeprom_32(EEPROM_INDEX_FOR_AP_IP)).toString());
+
+
   // =================================================
 
   xTaskCreate(btnCheck, "check_button", 4096, NULL, 1, NULL);
