@@ -29,10 +29,10 @@ void eeprom_init(bool _reset)
     write_eeprom_8(EEPROM_INDEX_FOR_TURN_ON_DELAY, DEFAULT_TURN_ON_DELAY);
   }
 
-  if (read_eeprom_8(EEPROM_INDEX_FOR_TURN_OFF_DELAY) > MAX_TURN_OFF_DELAY ||
-      read_eeprom_8(EEPROM_INDEX_FOR_TURN_OFF_DELAY) < MIN_TURN_OFF_DELAY || _reset)
+  if (read_eeprom_8(EEPROM_INDEX_FOR_THRESH_DELAY) > MAX_THRESH_DELAY ||
+      read_eeprom_8(EEPROM_INDEX_FOR_THRESH_DELAY) < MIN_THRESH_DELAY || _reset)
   {
-    write_eeprom_8(EEPROM_INDEX_FOR_TURN_OFF_DELAY, DEFAULT_TURN_OFF_DELAY);
+    write_eeprom_8(EEPROM_INDEX_FOR_THRESH_DELAY, DEFAULT_THRESH_DELAY);
   }
 
   if (read_eeprom_16(EEPROM_INDEX_FOR_RUN_SLEEP_DELAY) > MAX_RUN_SLEEP_DELAY || _reset)

@@ -33,10 +33,9 @@ constexpr uint16_t DEFAULT_LIGHT_SENSOR_THRESHOLD = 3000; // значение д
 constexpr uint8_t MAX_TURN_ON_DELAY = 10;    // максимальная задержка включения ближнего света после запуска двигателя, в секундах
 constexpr uint8_t DEFAULT_TURN_ON_DELAY = 3; // задержка по умолчанию включения ближнего света после запуска двигателя, в секундах
 
-constexpr uint8_t MAX_TURN_OFF_DELAY = 60; // максимальная задержка выключения ближнего света после перехода порога датчика освещенности, в секундах
-constexpr uint8_t MIN_TURN_OFF_DELAY = 5;  // минимальная задержка выключения ближнего света после перехода порога датчика освещенности, в секундах
-constexpr uint8_t DEFAULT_TURN_OFF_DELAY = 30;
-// задержка по умолчанию выключения ближнего света после перехода порога датчика освещенности, в секундах
+constexpr uint8_t MAX_THRESH_DELAY = 60;         // максимальная задержка выключения ближнего света после перехода порога датчика освещенности, в секундах
+constexpr uint8_t MIN_THRESH_DELAY = 5;          // минимальная задержка выключения ближнего света после перехода порога датчика освещенности, в секундах
+constexpr uint8_t DEFAULT_THRESH_DELAY = 30;     // задержка по умолчанию выключения ближнего света после перехода порога датчика освещенности, в секундах
 constexpr uint16_t MAX_RUN_SLEEP_DELAY = 60;     // максимальная задержка перехода в спящий режим после выключения зажигания, в секундах
 constexpr uint16_t DEFAULT_RUN_SLEEP_DELAY = 10; // задержка по умолчанию перехода в спящий режим после выключения зажигания, в секундах
 
@@ -54,7 +53,7 @@ constexpr char *DEFAULT_AP_IP = "192.168.4.1";    // ip адрес точки д
 #define EEPROM_INDEX_FOR_LIGHT_SENSOR_THRESHOLD 1 // индекс для хранения порога включения ближнего света, uint16_t
 #define EEPROM_INDEX_FOR_CURRENT_MODE 3           // индекс для хранения текущего режима работы, uint8_t
 #define EEPROM_INDEX_FOR_TURN_ON_DELAY 4          // индекс для хранения задержки включения ближнего света после запуска двигателя, uint8_t
-#define EEPROM_INDEX_FOR_TURN_OFF_DELAY 5         // индекс для хранения задержки выключения ближнего света после перехода порога датчика освещенности, uint8_t
+#define EEPROM_INDEX_FOR_THRESH_DELAY 5           // индекс для хранения задержки выключения ближнего света после перехода порога датчика освещенности, uint8_t
 #define EEPROM_INDEX_FOR_RUN_SLEEP_DELAY 6        // индекс для хранения задержки перехода в спящий режим после выключения зажигания, uint16_t
 #define EEPROM_INDEX_FOR_AP_SSID 8                // индекс для хранения имени точки доступа, 33 байта; первый байт - размер строки
 #define EEPROM_INDEX_FOR_AP_PASSWORD 41           // индекс для хранения пароля точки доступа, 65 байт; первый байт - размер строки
@@ -109,9 +108,9 @@ CRGB leds[LEDS_NUM]; // индикаторный светодиод;
 xTaskHandle xTask_leds;
 
 xSemaphoreHandle xSemaphore_relays = xSemaphoreCreateMutex();
-xSemaphoreHandle xSemaphore_eng_run  = xSemaphoreCreateMutex();
-xSemaphoreHandle xSemaphore_wifi  = xSemaphoreCreateMutex();
-xSemaphoreHandle xSemaphore_eeprom  = xSemaphoreCreateMutex();
+xSemaphoreHandle xSemaphore_eng_run = xSemaphoreCreateMutex();
+xSemaphoreHandle xSemaphore_wifi = xSemaphoreCreateMutex();
+xSemaphoreHandle xSemaphore_eeprom = xSemaphoreCreateMutex();
 
 // ===================================================
 

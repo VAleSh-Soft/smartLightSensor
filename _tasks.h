@@ -117,7 +117,7 @@ void lightSensorCheck(void *pvParameters)
       // тут же управление таймером отключения БС, если поднят флаг таймера
       if (timer)
       {
-        if (timer_counter >= read_eeprom_8(EEPROM_INDEX_FOR_TURN_OFF_DELAY) * 1000ul / SLS_DELAY)
+        if (timer_counter >= read_eeprom_8(EEPROM_INDEX_FOR_THRESH_DELAY) * 1000ul / SLS_DELAY)
         {
           setRelayState(SLS_RELAY_ALL, false);
           timer = false;
