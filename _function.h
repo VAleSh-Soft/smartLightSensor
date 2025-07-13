@@ -124,6 +124,37 @@ WiFiModuleState getWiFiState()
   return _state;
 }
 
+#if LOG_ON
+void writeCurrentSettings()
+{
+  SLS_PRINTLN(F("================================="));
+  SLS_PRINTLN(F("Current Settings:"));
+  SLS_PRINTLN();
+  SLS_PRINT(F("  Current Mode: "));
+  SLS_PRINTLN(((uint8_t)getCurrentMode()) ? F("Auto") : F("Manual"));
+  SLS_PRINT(F("  Liht Sensor Threshold: "));
+  SLS_PRINT(read_eeprom_16(EEPROM_INDEX_FOR_LIGHT_SENSOR_THRESHOLD) / 40);
+  SLS_PRINTLN(F(" %"));
+  SLS_PRINT(F("  Low Beam Shutdown Delay (seconds): "));
+  SLS_PRINTLN(read_eeprom_8(EEPROM_INDEX_FOR_LB_SHUTDOWN_DELAY));
+  SLS_PRINT(F("  Delay For Turn ON (seconds): "));
+  SLS_PRINTLN(read_eeprom_8(EEPROM_INDEX_FOR_TURN_ON_DELAY));
+  SLS_PRINT(F("  Delay For Starting Sleep Mode (seconds): "));
+  SLS_PRINTLN(read_eeprom_8(EEPROM_INDEX_FOR_STARTING_SLEEP_DELAY));
+  SLS_PRINTLN();
+  SLS_PRINTLN(F("Settings For AP:"));
+  SLS_PRINTLN();
+  SLS_PRINT(F("  AP SSID: "));
+  SLS_PRINTLN(read_string_from_eeprom(EEPROM_INDEX_FOR_AP_SSID, 32));
+  SLS_PRINT(F("  AP Password: "));
+  SLS_PRINTLN(read_string_from_eeprom(EEPROM_INDEX_FOR_AP_PASSWORD, 64));
+  SLS_PRINT(F("  AP IP: "));
+  SLS_PRINTLN(IPAddress(read_eeprom_32(EEPROM_INDEX_FOR_AP_IP)).toString());
+  SLS_PRINTLN(F("================================="));
+  SLS_PRINTLN();
+}
+#endif
+
 // ===================================================
 
 class slsButton : public shButton

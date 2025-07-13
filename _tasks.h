@@ -117,7 +117,7 @@ void lightSensorCheck(void *pvParameters)
       // тут же управление таймером отключения БС, если поднят флаг таймера
       if (timer)
       {
-        if (timer_counter >= read_eeprom_8(EEPROM_INDEX_FOR_THRESH_DELAY) * 1000ul / SLS_DELAY)
+        if (timer_counter >= read_eeprom_8(EEPROM_INDEX_FOR_LB_SHUTDOWN_DELAY) * 1000ul / SLS_DELAY)
         {
           setRelayState(SLS_RELAY_ALL, false);
           timer = false;
@@ -194,7 +194,7 @@ void startSleepMode(void *pvParameters)
     // если флаг поднят, отсчитываем заданный интервал и уходим в сон
     if (_flag)
     {
-      if (timer >= read_eeprom_16(EEPROM_INDEX_FOR_RUN_SLEEP_DELAY) * 10)
+      if (timer >= read_eeprom_16(EEPROM_INDEX_FOR_STARTING_SLEEP_DELAY) * 10)
       {
         // здесь делаем подготовку ко сну
         vTaskSuspend(xTask_leds);

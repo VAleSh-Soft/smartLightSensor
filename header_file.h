@@ -6,6 +6,7 @@
 
 // ==== Настройки ====================================
 
+#define LOG_ON 1             // использовать вывод отладочной информации через UART
 #define USE_RELAY_FOR_DRL 0  // использовать реле для ходовых огней; 0 - не использовать, 1 - использовать реле (ДХО будут включаться при старте двигателя);
 #define USE_DRL_MANAGEMENT 0 // управлять ходовыми огнями; это нужно, если ходовые огни не отключаются автоматически при включении ближнего света; 0 - не управлять, 1 - управлять (ДХО будут включаться и выключаться в зависимости от состояния реле габаритных огней)
 
@@ -53,8 +54,8 @@ constexpr char *DEFAULT_AP_IP = "192.168.4.1";    // ip адрес точки д
 #define EEPROM_INDEX_FOR_LIGHT_SENSOR_THRESHOLD 1 // индекс для хранения порога включения ближнего света, uint16_t
 #define EEPROM_INDEX_FOR_CURRENT_MODE 3           // индекс для хранения текущего режима работы, uint8_t
 #define EEPROM_INDEX_FOR_TURN_ON_DELAY 4          // индекс для хранения задержки включения ближнего света после запуска двигателя, uint8_t
-#define EEPROM_INDEX_FOR_THRESH_DELAY 5           // индекс для хранения задержки выключения ближнего света после перехода порога датчика освещенности, uint8_t
-#define EEPROM_INDEX_FOR_RUN_SLEEP_DELAY 6        // индекс для хранения задержки перехода в спящий режим после выключения зажигания, uint16_t
+#define EEPROM_INDEX_FOR_LB_SHUTDOWN_DELAY 5           // индекс для хранения задержки выключения ближнего света после перехода порога датчика освещенности, uint8_t
+#define EEPROM_INDEX_FOR_STARTING_SLEEP_DELAY 6        // индекс для хранения задержки перехода в спящий режим после выключения зажигания, uint16_t
 #define EEPROM_INDEX_FOR_AP_SSID 8                // индекс для хранения имени точки доступа, 33 байта; первый байт - размер строки
 #define EEPROM_INDEX_FOR_AP_PASSWORD 41           // индекс для хранения пароля точки доступа, 65 байт; первый байт - размер строки
 #define EEPROM_INDEX_FOR_AP_IP 106                // индекс для хранения ip адреса точки доступа, uint32_t
@@ -105,6 +106,15 @@ CRGB leds[LEDS_NUM]; // индикаторный светодиод;
 
 // ===================================================
 
+#if LOG_ON
+#define SLS_PRINTLN(x) Serial.println(x)
+#define SLS_PRINT(x) Serial.print(x)
+#else
+#define SLS_PRINTLN(x)
+#define SLS_PRINT(x)
+#endif
+
+
 xTaskHandle xTask_leds;
 
 xSemaphoreHandle xSemaphore_relays = xSemaphoreCreateMutex();
@@ -127,6 +137,9 @@ void setRelayState(RelayState _rel, bool _state);
 uint8_t getRelayState(RelayState _rel);
 void setWiFiState(WiFiModuleState _state);
 WiFiModuleState getWiFiState();
+#if LOG_ON
+void writeCurrentSettings();
+#endif
 
 // ==== _tasks.h =====================================
 
@@ -162,3 +175,7 @@ void handleGetConfigPage();
 void handleGetConfig();
 void handleSetConfig();
 void handleClose();
+
+// ==== Other ========================================
+
+

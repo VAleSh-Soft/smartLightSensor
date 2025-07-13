@@ -4,12 +4,15 @@
 #include "_function.h"
 #include "_tasks.h"
 #include "_http.h"
+#include "Arduino.h"
 
 // ===================================================
 
 void setup()
 {
+#if LOG_ON
   Serial.begin(115200);
+#endif
 
   // =================================================
 
@@ -44,6 +47,13 @@ void setup()
   xTaskCreate(engineRunCheck, "engine_run_check", 2048, NULL, 1, NULL);
   xTaskCreate(startSleepMode, "start_sleep_mode", 2048, NULL, 1, NULL);
   xTaskCreate(wifiModuleManagement, "wifi_module_management", 4096, NULL, 1, NULL);
+
+  // =================================================
+#if LOG_ON
+  writeCurrentSettings();
+  SLS_PRINTLN(F("Device Started"));
+  SLS_PRINTLN();
+#endif
 }
 
 void loop() {}
