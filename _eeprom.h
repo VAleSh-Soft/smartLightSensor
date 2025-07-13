@@ -13,6 +13,12 @@ void eeprom_init(bool _reset)
 {
   EEPROM.begin(EEPROM_SIZE);
 
+  if (_reset)
+  {
+    SLS_PRINTLN(F("Resetting The Settings To Default"));
+  }
+  
+
   if (read_eeprom_16(EEPROM_INDEX_FOR_LIGHT_SENSOR_THRESHOLD) > 4095 ||
       read_eeprom_16(EEPROM_INDEX_FOR_LIGHT_SENSOR_THRESHOLD) == 0 || _reset)
   {

@@ -136,6 +136,7 @@ void setRelayState(RelayState _rel, bool _state);
 uint8_t getRelayState(RelayState _rel);
 void setWiFiState(WiFiModuleState _state);
 WiFiModuleState getWiFiState();
+void startSleep();
 #if LOG_ON
 void printCurrentSettings();
 #endif
@@ -151,7 +152,7 @@ void lightSensorCheck(void *pvParameters);
 // отслеживание момента запуска двигателя
 void engineRunCheck(void *pvParameters);
 // переход в спящий режим
-void startSleepMode(void *pvParameters);
+void checkingForSleepMode(void *pvParameters);
 // управление WiFi
 void wifiModuleManagement(void *pvParameters);
 

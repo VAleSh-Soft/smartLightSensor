@@ -160,7 +160,7 @@ void engineRunCheck(void *pvParameters)
   {
     if (!getEngineRunFlag())
     {
-      if (digitalRead(ENGINE_RUN_PIN))
+      if (digitalRead(ENGINE_RUN_PIN) && digitalRead(IGNITION_PIN))
       { // поднимать флаг запуска двигателя и, соответственно, включать БС только по истечении времени задержки;
         SLS_PRINTLN(F("The Engine Is Running"));
         vTaskDelay(read_eeprom_8(EEPROM_INDEX_FOR_TURN_ON_DELAY) * 1000ul);
@@ -173,7 +173,7 @@ void engineRunCheck(void *pvParameters)
   vTaskDelete(NULL);
 }
 
-void startSleepMode(void *pvParameters)
+void checkingForSleepMode(void *pvParameters)
 {
   uint16_t timer = 0;
   bool _flag = false;
@@ -212,15 +212,7 @@ void startSleepMode(void *pvParameters)
         leds[0] = CRGB::Black;
         FastLED.show();
 
-        uint64_t wakeup_pin_mask = 1;
-        for (uint8_t i = 0; i < IGNITION_PIN; i++)
-        {
-          wakeup_pin_mask *= 2;
-        }
-        SLS_PRINTLN(F("Switching To Sleep Mode"));
-        SLS_PRINTLN();
-        esp_deep_sleep_enable_gpio_wakeup(wakeup_pin_mask, ESP_GPIO_WAKEUP_GPIO_HIGH);
-        esp_deep_sleep_start();
+        startSleep();
       }
       else
       {

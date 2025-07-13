@@ -33,10 +33,22 @@ void setup()
 
   // =================================================
 
+  if (!digitalRead(IGNITION_PIN)) // если в момент старта зажигание не включено, сразу переходим в режим сна
+  {
+    SLS_PRINTLN(F("Ignition Is Not Turned On Yet"));
+    startSleep();
+  }
+
+  // =================================================
+
   http_init();
   eeprom_init(!digitalRead(BTN_MODE_PIN)); // при зажатой при старте кнопке настройки сбрасываются к настройкам по умолчанию
   while (!digitalRead(BTN_MODE_PIN))       // ждем отпускания кнопки, если она была нажата при включении
-    ;
+  {
+    leds[0] = CRGB::White; // если кнопка нажата, включаем белый цвет - пора опускать
+    FastLED.show();
+    delay(100);
+  }
 
   setCurrentMode(AutoLightSensorMode(read_eeprom_8(EEPROM_INDEX_FOR_CURRENT_MODE)));
 
@@ -46,10 +58,17 @@ void setup()
   xTaskCreate(setLeds, "set_led", 2048, NULL, 1, &xTask_leds);
   xTaskCreate(lightSensorCheck, "light_sensor_check", 2048, NULL, 1, NULL);
   xTaskCreate(engineRunCheck, "engine_run_check", 2048, NULL, 1, NULL);
-  xTaskCreate(startSleepMode, "start_sleep_mode", 2048, NULL, 1, NULL);
+  xTaskCreate(checkingForSleepMode, "start_sleep_mode", 2048, NULL, 1, NULL);
   xTaskCreate(wifiModuleManagement, "wifi_module_management", 4096, NULL, 1, NULL);
 
   // =================================================
+
+  if (!digitalRead(IGNITION_PIN))
+  {
+    SLS_PRINTLN(F("Ignition Is Not Turned On Yet"));
+    startSleep();
+  }
+
 #if LOG_ON
   printCurrentSettings();
   SLS_PRINTLN(F("Device Started"));
