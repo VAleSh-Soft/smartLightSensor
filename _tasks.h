@@ -104,6 +104,7 @@ void lightSensorCheck(void *pvParameters)
       { // если уровень снизился до порога включения БС, то включить БС и сбросить флаг отключения БС
         setRelayState(SLS_RELAY_ALL, true);
         timer = false;
+        SLS_PRINTLN(F("The Low Beam Is ON"));
       }
       else if (sensor_data > (t + LIGHT_SENSOR_THRESHOLD_HISTERESIS))
       { // если уровень превысил порог включения БС, реле БС включено, а флаг отключения БС еще не поднят, поднять его
@@ -121,6 +122,7 @@ void lightSensorCheck(void *pvParameters)
         {
           setRelayState(SLS_RELAY_ALL, false);
           timer = false;
+        SLS_PRINTLN(F("The Low Beam Is OFF"));
         }
         else
         {
@@ -131,6 +133,7 @@ void lightSensorCheck(void *pvParameters)
     else if (getRelayState(SLS_RELAY_LB))
     {
       setRelayState(SLS_RELAY_ALL, false);
+        SLS_PRINTLN(F("The Low Beam Is OFF"));
     }
 
     // и здесь же управление яркостью светодиода - вне зависимость от режима работы
@@ -156,6 +159,7 @@ void engineRunCheck(void *pvParameters)
     {
       if (digitalRead(ENGINE_RUN_PIN))
       { // поднимать флаг запуска двигателя и, соответственно, включать БС только по истечении времени задержки;
+        SLS_PRINTLN(F("The Engine Is Running"));
         vTaskDelay(read_eeprom_8(EEPROM_INDEX_FOR_TURN_ON_DELAY) * 1000ul);
         setEngineRunFlag(true);
       }
@@ -180,6 +184,8 @@ void startSleepMode(void *pvParameters)
       {
         _flag = true;
         timer = 0;
+        SLS_PRINTLN(F("The Ignition Is OFF"));
+        SLS_PRINTLN(F("Pause Before Turning ON Sleep Mode"));
       }
     }
     else
@@ -188,6 +194,8 @@ void startSleepMode(void *pvParameters)
       if (digitalRead(IGNITION_PIN))
       {
         _flag = false;
+        SLS_PRINTLN(F("The Ignition Is ON"));
+        SLS_PRINTLN(F("Canceling Sleep Mode Activation"));
       }
     }
 
@@ -206,6 +214,7 @@ void startSleepMode(void *pvParameters)
         {
           wakeup_pin_mask *= 2;
         }
+        SLS_PRINTLN(F("Switching To Sleep Mode"));
         esp_deep_sleep_enable_gpio_wakeup(wakeup_pin_mask, ESP_GPIO_WAKEUP_GPIO_HIGH);
         esp_deep_sleep_start();
       }
@@ -236,6 +245,7 @@ void wifiModuleManagement(void *pvParameters)
       if (WiFi.softAP(read_string_from_eeprom(EEPROM_INDEX_FOR_AP_SSID, 32),
                       read_string_from_eeprom(EEPROM_INDEX_FOR_AP_PASSWORD, 64)))
       {
+        SLS_PRINTLN(F("Access Point Start"));
         slsDelay = 1ul; // в режиме точки доступа крутим быстро для нормальной реакции сервера
         HTTP.begin();
         setWiFiState(SLS_WIFI_AP);
@@ -247,6 +257,7 @@ void wifiModuleManagement(void *pvParameters)
         HTTP.stop();
         WiFi.softAPdisconnect(true);
         WiFi.mode(WIFI_OFF);
+        SLS_PRINTLN(F("Access Point Stop"));
         slsDelay = 100ul; // если точка доступа отключена, замедляемся
       }
       break;
