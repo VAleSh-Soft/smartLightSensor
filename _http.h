@@ -60,8 +60,8 @@ void handleGetConfig()
   doc[turn_on_delay] = read_eeprom_8(EEPROM_INDEX_FOR_TURN_ON_DELAY);
   doc[max_turn_on_delay] = MAX_TURN_ON_DELAY;
   doc[lb_shutown_delay] = read_eeprom_8(EEPROM_INDEX_FOR_LB_SHUTDOWN_DELAY);
-  doc[max_lb_shutown_delay] = MAX_THRESH_DELAY;
-  doc[min_lb_shutown_delay] = MIN_THRESH_DELAY;
+  doc[max_lb_shutown_delay] = MAX_LB_SHUTDOWN_DELAY;
+  doc[min_lb_shutown_delay] = MIN_LB_SHUTDOWN_DELAY;
   doc[run_sleep_delay] = read_eeprom_8(EEPROM_INDEX_FOR_STARTING_SLEEP_DELAY);
   doc[max_run_sleep_delay] = MAX_RUN_SLEEP_DELAY;
   doc[threshold] = read_eeprom_16(EEPROM_INDEX_FOR_LIGHT_SENSOR_THRESHOLD) / 40;

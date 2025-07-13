@@ -12,6 +12,7 @@ void setup()
 {
 #if LOG_ON
   Serial.begin(115200);
+  SLS_PRINTLN();
 #endif
 
   // =================================================

@@ -12,6 +12,8 @@ WiFiModuleState wifi_state = SLS_WIFI_OFF; // состояние WiFi
 
 void setCurrentMode(AutoLightSensorMode _mode)
 {
+  SLS_PRINT(F("Setting The Current Mode: "));
+  SLS_PRINTLN(((uint8_t)getCurrentMode()) ? F("Auto") : F("Manual"));
   write_eeprom_8(EEPROM_INDEX_FOR_CURRENT_MODE, uint8_t(_mode));
 }
 

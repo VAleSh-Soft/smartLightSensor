@@ -102,9 +102,12 @@ void lightSensorCheck(void *pvParameters)
     {
       if (sensor_data <= t)
       { // если уровень снизился до порога включения БС, то включить БС и сбросить флаг отключения БС
-        setRelayState(SLS_RELAY_ALL, true);
-        timer = false;
-        SLS_PRINTLN(F("The Low Beam Is ON"));
+        if (!getRelayState(SLS_RELAY_LB))
+        {
+          setRelayState(SLS_RELAY_ALL, true);
+          timer = false;
+          SLS_PRINTLN(F("The Low Beam Is ON"));
+        }
       }
       else if (sensor_data > (t + LIGHT_SENSOR_THRESHOLD_HISTERESIS))
       { // если уровень превысил порог включения БС, реле БС включено, а флаг отключения БС еще не поднят, поднять его
@@ -215,6 +218,7 @@ void startSleepMode(void *pvParameters)
           wakeup_pin_mask *= 2;
         }
         SLS_PRINTLN(F("Switching To Sleep Mode"));
+        SLS_PRINTLN();
         esp_deep_sleep_enable_gpio_wakeup(wakeup_pin_mask, ESP_GPIO_WAKEUP_GPIO_HIGH);
         esp_deep_sleep_start();
       }
