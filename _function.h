@@ -5,7 +5,7 @@
 
 // ===================================================
 
-bool engine_run_flag = false;        // флаг запуска двигателя
+bool engine_run_flag = false;              // флаг запуска двигателя
 WiFiModuleState wifi_state = SLS_WIFI_OFF; // состояние WiFi
 
 // ===================================================
@@ -125,7 +125,7 @@ WiFiModuleState getWiFiState()
 }
 
 #if LOG_ON
-void writeCurrentSettings()
+void printCurrentSettings()
 {
   SLS_PRINTLN(F("================================="));
   SLS_PRINTLN(F("Current Settings:"));

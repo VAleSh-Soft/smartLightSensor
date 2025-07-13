@@ -50,7 +50,7 @@ void setup()
 
   // =================================================
 #if LOG_ON
-  writeCurrentSettings();
+  printCurrentSettings();
   SLS_PRINTLN(F("Device Started"));
   SLS_PRINTLN();
 #endif

@@ -122,7 +122,7 @@ void lightSensorCheck(void *pvParameters)
         {
           setRelayState(SLS_RELAY_ALL, false);
           timer = false;
-        SLS_PRINTLN(F("The Low Beam Is OFF"));
+          SLS_PRINTLN(F("The Low Beam Is OFF"));
         }
         else
         {
@@ -133,7 +133,7 @@ void lightSensorCheck(void *pvParameters)
     else if (getRelayState(SLS_RELAY_LB))
     {
       setRelayState(SLS_RELAY_ALL, false);
-        SLS_PRINTLN(F("The Low Beam Is OFF"));
+      SLS_PRINTLN(F("The Low Beam Is OFF"));
     }
 
     // и здесь же управление яркостью светодиода - вне зависимость от режима работы

@@ -15,17 +15,17 @@
 
 // ===================================================
 
- const String ap_ssid = "ap_ssid";
- const String ap_pass = "ap_pass";
- const String ap_ip = "ap_ip";
- const String threshold = "threshold";
- const String turn_on_delay = "turn_on_delay";
- const String max_turn_on_delay = "max_turn_on_delay";
- const String run_sleep_delay = "run_sleep_delay";
- const String max_run_sleep_delay = "max_run_sleep_delay";
- const String lb_shutown_delay = "lb_shutown_delay";
- const String max_lb_shutown_delay = "max_lb_shutown_delay";
- const String min_lb_shutown_delay = "min_lb_shutown_delay";
+const String ap_ssid = "ap_ssid";
+const String ap_pass = "ap_pass";
+const String ap_ip = "ap_ip";
+const String threshold = "threshold";
+const String turn_on_delay = "turn_on_delay";
+const String max_turn_on_delay = "max_turn_on_delay";
+const String run_sleep_delay = "run_sleep_delay";
+const String max_run_sleep_delay = "max_run_sleep_delay";
+const String lb_shutown_delay = "lb_shutown_delay";
+const String max_lb_shutown_delay = "max_lb_shutown_delay";
+const String min_lb_shutown_delay = "min_lb_shutown_delay";
 
 // ===================================================
 
@@ -46,6 +46,7 @@ void http_init()
 
 void handleGetConfigPage()
 {
+  SLS_PRINTLN(F("Web Interface Start"));
   HTTP.send(200, "text/html", FPSTR(config_page));
 }
 
@@ -67,7 +68,8 @@ void handleGetConfig()
 
   String _res = "";
   serializeJson(doc, _res);
-  Serial.println(_res);
+
+  SLS_PRINTLN(F("Requested Data For The Web Interface"));
 
   HTTP.send(200, "text/json", _res);
 }
@@ -76,21 +78,20 @@ void handleSetConfig()
 {
   if (HTTP.hasArg("plain") == false)
   {
-    Serial.println(F("Failed to save configuration data, no data"));
+    SLS_PRINTLN(F("Failed to save configuration data, no data"));
     HTTP.send(200, "text/plain", F("Body not received"));
     return;
   }
 
   String json = HTTP.arg("plain");
-  Serial.println(json);
 
   DynamicJsonDocument doc(1024);
 
   DeserializationError error = deserializeJson(doc, json);
   if (error)
   {
-    Serial.println(F("Failed to save configuration data, invalid json data"));
-    Serial.println(error.f_str());
+    SLS_PRINTLN(F("Failed to save configuration data, invalid json data"));
+    SLS_PRINTLN(error.f_str());
   }
   else
   {
@@ -103,6 +104,10 @@ void handleSetConfig()
     write_eeprom_8(EEPROM_INDEX_FOR_STARTING_SLEEP_DELAY, doc[run_sleep_delay].as<uint8_t>());
     write_eeprom_16(EEPROM_INDEX_FOR_LIGHT_SENSOR_THRESHOLD, doc[threshold].as<uint16_t>() * 40);
     HTTP.send(200, "text/html", F("<META http-equiv='refresh' content='1;URL=/_close'><p align='center'>Save settings...</p>"));
+    SLS_PRINTLN(F("The Settings are Saved"));
+#if LOG_ON
+    printCurrentSettings();
+#endif
   }
 }
 
