@@ -137,6 +137,7 @@ uint8_t getRelayState(RelayState _rel);
 void setWiFiState(WiFiModuleState _state);
 WiFiModuleState getWiFiState();
 void startSleep();
+void wifiStop();
 #if LOG_ON
 void printCurrentSettings();
 #endif
@@ -176,4 +177,3 @@ void handleGetConfig();
 void handleSetConfig();
 void handleClose();
 
-// ==== Other ========================================

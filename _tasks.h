@@ -207,11 +207,6 @@ void checkingForSleepMode(void *pvParameters)
     {
       if (timer >= read_eeprom_16(EEPROM_INDEX_FOR_STARTING_SLEEP_DELAY) * 10)
       {
-        // здесь делаем подготовку ко сну
-        vTaskSuspend(xTask_leds);
-        leds[0] = CRGB::Black;
-        FastLED.show();
-
         startSleep();
       }
       else
@@ -250,10 +245,7 @@ void wifiModuleManagement(void *pvParameters)
     case SLS_WIFI_OFF:
       if (WiFi.getMode() != WIFI_OFF)
       {
-        HTTP.stop();
-        WiFi.softAPdisconnect(true);
-        WiFi.mode(WIFI_OFF);
-        SLS_PRINTLN(F("Access Point Stop"));
+        wifiStop();
         slsDelay = 100ul; // если точка доступа отключена, замедляемся
       }
       break;
