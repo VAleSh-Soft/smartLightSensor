@@ -1,6 +1,7 @@
 #pragma once
 
 #include <WebServer.h>
+#include <HTTPUpdateServer.h>
 #include <shButton.h>
 #include <FastLED.h>
 
@@ -125,6 +126,9 @@ xSemaphoreHandle xSemaphore_eeprom = xSemaphoreCreateMutex();
 
 // Web интерфейс для устройства
 WebServer HTTP(80);
+// сервер обновления по воздуху через web-интерфейс
+HTTPUpdateServer httpUpdater;
+String updateServerPage = "/firmware";
 
 // ==== _function.h ==================================
 

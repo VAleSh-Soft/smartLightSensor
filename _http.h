@@ -9,7 +9,7 @@
  * строка для отправки на Web-страницу
  * {"ap_ssid":"test","ap_pass":"12345678","ap_ip":"192.168.4.1","threshold":90,"turn_on_delay":3,"max_turn_on_delay":10,"run_sleep_delay":20,"max_run_sleep_delay":60,"lb_shutown_delay":30, "max_lb_shutown_delay":60,"min_lb_shutown_delay":5}
  *
- * строка с Web-страницы для сохранения параметров
+ * строка от Web-страницы для сохранения параметров
  * {"ap_ssid":"test","ap_pass":"12345678","ap_ip":"192.168.4.1","threshold":90,"turn_on_delay":3,"run_sleep_delay":20,"lb_shutown_delay":30}
  */
 
@@ -42,6 +42,8 @@ void http_init()
   HTTP.on("/_setconfig", HTTP_POST, handleSetConfig);
   // закрытие вкладки браузера и отключение WiFi
   HTTP.on("/_close", HTTP_GET, handleClose);
+  // обновление прошивки через Web-интерфейс
+  httpUpdater.setup(&HTTP, updateServerPage);
 }
 
 void handleGetConfigPage()
