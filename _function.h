@@ -140,8 +140,8 @@ void startSleep()
 
   if (getWiFiState() != SLS_WIFI_OFF)
   {
-    setWiFiState(SLS_WIFI_OFF);
     wifiStop();
+    setWiFiState(SLS_WIFI_OFF);
   }
 
   uint64_t wakeup_pin_mask = 1;

@@ -165,6 +165,9 @@ void engineRunCheck(void *pvParameters)
         SLS_PRINTLN(F("The Engine Is Running"));
         vTaskDelay(read_eeprom_8(EEPROM_INDEX_FOR_TURN_ON_DELAY) * 1000ul);
         setEngineRunFlag(true);
+#if USE_RELAY_FOR_DRL
+        setRelayState(SLS_RELAY_ALL, false); // это чтобы сразу включилось реле ДХО, если оно есть
+#endif
       }
     }
 
