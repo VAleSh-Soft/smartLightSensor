@@ -132,6 +132,11 @@ void startSleep()
   vTaskSuspend(xTask_leds);
   leds[0] = CRGB::Black;
   FastLED.show();
+  pinMode(RELAY_FOR_LB_PIN, INPUT);
+  pinMode(RELAY_FOR_PL_PIN, INPUT);
+#if USE_RELAY_FOR_DRL
+  pinMode(RELAY_FOR_DRL_PIN, INPUT);
+#endif
 
   if (getWiFiState() != SLS_WIFI_OFF)
   {

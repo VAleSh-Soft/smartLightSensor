@@ -17,8 +17,9 @@ void setup()
 
   // =================================================
 
-  FastLED.addLeds<WS2811, LEDS_DATA_PIN, RGB>(leds, LEDS_NUM);
+  FastLED.addLeds<WS2811, LEDS_DATA_PIN, RGB>(leds, LEDS_NUM).setCorrection(Typical8mmPixel);
   leds[0] = CRGB::Black;
+  FastLED.setBrightness(0);
   FastLED.show();
 
   // =================================================
@@ -33,11 +34,11 @@ void setup()
 
   // =================================================
 
-  if (!digitalRead(IGNITION_PIN)) // если в момент старта зажигание не включено, сразу переходим в режим сна
-  {
-    SLS_PRINTLN(F("Ignition Is Not Turned On Yet"));
-    startSleep();
-  }
+  // if (!digitalRead(IGNITION_PIN)) // если в момент старта зажигание не включено, сразу переходим в режим сна
+  // {
+  //   SLS_PRINTLN(F("Ignition Is Not Turned On Yet"));
+  //   startSleep();
+  // }
 
   // =================================================
 
@@ -45,7 +46,7 @@ void setup()
   eeprom_init(!digitalRead(BTN_MODE_PIN)); // при зажатой при старте кнопке настройки сбрасываются к настройкам по умолчанию
   while (!digitalRead(BTN_MODE_PIN))       // ждем отпускания кнопки, если она была нажата при включении
   {
-    leds[0] = CRGB::White; // если кнопка нажата, включаем белый цвет - пора опускать
+    leds[0] = CRGB::White; // если кнопка нажата, включаем белый цвет - пора отпускать
     FastLED.setBrightness(50);
     FastLED.show();
     delay(100);
@@ -63,12 +64,6 @@ void setup()
   xTaskCreate(wifiModuleManagement, "wifi_module_management", 4096, NULL, 1, NULL);
 
   // =================================================
-
-  if (!digitalRead(IGNITION_PIN))
-  {
-    SLS_PRINTLN(F("Ignition Is Not Turned On Yet"));
-    startSleep();
-  }
 
 #if LOG_ON
   printCurrentSettings();

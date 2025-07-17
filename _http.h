@@ -97,8 +97,8 @@ void handleSetConfig()
   }
   else
   {
-    const char *_ip = doc[ap_ip].as<String>().c_str();
-    write_eeprom_32(EEPROM_INDEX_FOR_AP_IP, (uint32_t)IPAddress(_ip));
+    String ip = doc[ap_ip].as<String>();
+    write_eeprom_32(EEPROM_INDEX_FOR_AP_IP, (uint32_t)IPAddress(ip.c_str()));
     write_string_to_eeprom(EEPROM_INDEX_FOR_AP_SSID, doc[ap_ssid].as<String>().c_str());
     write_string_to_eeprom(EEPROM_INDEX_FOR_AP_PASSWORD, doc[ap_pass].as<String>().c_str());
     write_eeprom_8(EEPROM_INDEX_FOR_TURN_ON_DELAY, doc[turn_on_delay].as<uint8_t>());
@@ -119,6 +119,7 @@ void handleClose()
       R"(<!DOCTYPE html> <html> <body> <script> function closePage() { var request = new XMLHttpRequest(); request.open('GET', '/_getconfig', true); request.onload = function () { window.close(); }; request.send(); } document.addEventListener("DOMContentLoaded", closePage); </script> </body> </html>)";
 
   HTTP.send(200, "text/html", FPSTR(close_page));
+  vTaskDelay(500);
 
   setWiFiState(SLS_WIFI_OFF);
 }
