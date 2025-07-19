@@ -35,11 +35,11 @@ constexpr uint16_t DEFAULT_LIGHT_SENSOR_THRESHOLD = 3000; // значение д
 constexpr uint8_t MAX_TURN_ON_DELAY = 10;    // максимальная задержка включения ближнего света после запуска двигателя, в секундах
 constexpr uint8_t DEFAULT_TURN_ON_DELAY = 3; // задержка по умолчанию включения ближнего света после запуска двигателя, в секундах
 
-constexpr uint8_t MAX_LB_SHUTDOWN_DELAY = 60;         // максимальная задержка выключения ближнего света после перехода порога датчика освещенности, в секундах
-constexpr uint8_t MIN_LB_SHUTDOWN_DELAY = 5;          // минимальная задержка выключения ближнего света после перехода порога датчика освещенности, в секундах
-constexpr uint8_t DEFAULT_LB_SHUTDOWN_DELAY = 30;     // задержка по умолчанию выключения ближнего света после перехода порога датчика освещенности, в секундах
-constexpr uint16_t MAX_RUN_SLEEP_DELAY = 60;     // максимальная задержка перехода в спящий режим после выключения зажигания, в секундах
-constexpr uint16_t DEFAULT_RUN_SLEEP_DELAY = 10; // задержка по умолчанию перехода в спящий режим после выключения зажигания, в секундах
+constexpr uint8_t MAX_LB_SHUTDOWN_DELAY = 60;     // максимальная задержка выключения ближнего света после перехода порога датчика освещенности, в секундах
+constexpr uint8_t MIN_LB_SHUTDOWN_DELAY = 5;      // минимальная задержка выключения ближнего света после перехода порога датчика освещенности, в секундах
+constexpr uint8_t DEFAULT_LB_SHUTDOWN_DELAY = 30; // задержка по умолчанию выключения ближнего света после перехода порога датчика освещенности, в секундах
+constexpr uint16_t MAX_RUN_SLEEP_DELAY = 60;      // максимальная задержка перехода в спящий режим после выключения зажигания, в секундах
+constexpr uint16_t DEFAULT_RUN_SLEEP_DELAY = 10;  // задержка по умолчанию перехода в спящий режим после выключения зажигания, в секундах
 
 constexpr uint16_t LIGHT_SENSOR_THRESHOLD_HISTERESIS = 200; // гистрезис порога датчика света
 
@@ -144,6 +144,7 @@ void startSleep();
 void wifiStop();
 #if LOG_ON
 void printCurrentSettings();
+void printWiFiSetting();
 #endif
 
 // ==== _tasks.h =====================================
@@ -180,4 +181,3 @@ void handleGetConfigPage();
 void handleGetConfig();
 void handleSetConfig();
 void handleClose();
-

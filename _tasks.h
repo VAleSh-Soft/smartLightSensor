@@ -239,7 +239,11 @@ void wifiModuleManagement(void *pvParameters)
       if (WiFi.softAP(read_string_from_eeprom(EEPROM_INDEX_FOR_AP_SSID, 32),
                       read_string_from_eeprom(EEPROM_INDEX_FOR_AP_PASSWORD, 64)))
       {
+#if LOG_ON
         SLS_PRINTLN(F("Access Point Start"));
+        printWiFiSetting();
+        SLS_PRINTLN();
+#endif
         slsDelay = 1ul; // в режиме точки доступа крутим быстро для нормальной реакции сервера
         HTTP.begin();
         setWiFiState(SLS_WIFI_AP);

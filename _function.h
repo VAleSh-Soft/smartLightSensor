@@ -185,14 +185,18 @@ void printCurrentSettings()
   SLS_PRINTLN();
   SLS_PRINTLN(F("Settings For AP:"));
   SLS_PRINTLN();
+  printWiFiSetting();
+  SLS_PRINTLN(F("================================="));
+  SLS_PRINTLN();
+}
+void printWiFiSetting()
+{
   SLS_PRINT(F("  AP SSID: "));
   SLS_PRINTLN(read_string_from_eeprom(EEPROM_INDEX_FOR_AP_SSID, 32));
   SLS_PRINT(F("  AP Password: "));
   SLS_PRINTLN(read_string_from_eeprom(EEPROM_INDEX_FOR_AP_PASSWORD, 64));
   SLS_PRINT(F("  AP IP: "));
   SLS_PRINTLN(IPAddress(read_eeprom_32(EEPROM_INDEX_FOR_AP_IP)).toString());
-  SLS_PRINTLN(F("================================="));
-  SLS_PRINTLN();
 }
 #endif
 
