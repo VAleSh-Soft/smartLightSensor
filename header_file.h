@@ -11,13 +11,13 @@
 #define USE_RELAY_FOR_DRL 0  // использовать реле для ходовых огней; 0 - не использовать, 1 - использовать реле (ДХО будут включаться при старте двигателя);
 #define USE_DRL_MANAGEMENT 0 // управлять ходовыми огнями; это нужно, если ходовые огни не отключаются автоматически при включении ближнего света; 0 - не управлять, 1 - управлять (ДХО будут включаться и выключаться в зависимости от состояния реле габаритных огней)
 
-constexpr uint8_t LIGHT_SENSOR_PIN = 4; // пин датчика освещенности
+constexpr uint8_t LIGHT_SENSOR_PIN = 1; // пин датчика освещенности
 constexpr uint8_t IGNITION_PIN = 5;     // пин, на который приходит сигнал с линии зажигания; при появлении на этом пине высокого уровня МК выходит из глубокого сна, поэтому для esp32c3 допустимые значения 0..5
-constexpr uint8_t ENGINE_RUN_PIN = 6;   // пин, на который приходит сигнал с вывода D генератора или HIGH при запущенном двигателе
-constexpr uint8_t BTN_MODE_PIN = 3;     // пин кнопки режима работы
-constexpr uint8_t LEDS_DATA_PIN = 7;    // пин выхода для светодиодов
-constexpr uint8_t RELAY_FOR_LB_PIN = 8; // пин реле ближнего света
-constexpr uint8_t RELAY_FOR_PL_PIN = 9; // пин реле габаритных огней
+constexpr uint8_t ENGINE_RUN_PIN = 2;   // пин, на который приходит сигнал с вывода D генератора или HIGH при запущенном двигателе
+constexpr uint8_t BTN_MODE_PIN = 4;     // пин кнопки режима работы
+constexpr uint8_t LEDS_DATA_PIN = 3;    // пин выхода для светодиодов
+constexpr uint8_t RELAY_FOR_LB_PIN = 9; // пин реле ближнего света
+constexpr uint8_t RELAY_FOR_PL_PIN = 8; // пин реле габаритных огней
 #if USE_RELAY_FOR_DRL
 constexpr uint8_t RELAY_FOR_DRL_PIN = 10; // пин реле ходовых огней
 #endif

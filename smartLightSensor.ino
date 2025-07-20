@@ -24,21 +24,13 @@ void setup()
 
   // =================================================
 
+  pinMode(IGNITION_PIN, INPUT);
+  pinMode(ENGINE_RUN_PIN, INPUT);
   pinMode(RELAY_FOR_LB_PIN, OUTPUT);
   pinMode(RELAY_FOR_PL_PIN, OUTPUT);
-  pinMode(IGNITION_PIN, INPUT_PULLDOWN);
-  pinMode(ENGINE_RUN_PIN, INPUT_PULLDOWN);
 #if USE_RELAY_FOR_DRL
   pinMode(RELAY_FOR_DRL_PIN, OUTPUT);
 #endif
-
-  // =================================================
-
-  // if (!digitalRead(IGNITION_PIN)) // если в момент старта зажигание не включено, сразу переходим в режим сна
-  // {
-  //   SLS_PRINTLN(F("Ignition Is Not Turned On Yet"));
-  //   startSleep();
-  // }
 
   // =================================================
 

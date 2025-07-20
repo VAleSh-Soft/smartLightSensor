@@ -144,15 +144,9 @@ void startSleep()
     setWiFiState(SLS_WIFI_OFF);
   }
 
-  uint64_t wakeup_pin_mask = 1;
-  for (uint8_t i = 0; i < IGNITION_PIN; i++)
-  {
-    wakeup_pin_mask *= 2;
-  }
-
   SLS_PRINTLN(F("Switching To Sleep Mode"));
   SLS_PRINTLN();
-  esp_deep_sleep_enable_gpio_wakeup(wakeup_pin_mask, ESP_GPIO_WAKEUP_GPIO_HIGH);
+  esp_deep_sleep_enable_gpio_wakeup(1 << IGNITION_PIN, ESP_GPIO_WAKEUP_GPIO_HIGH);
   esp_deep_sleep_start();
 }
 
@@ -163,7 +157,6 @@ void wifiStop()
   WiFi.mode(WIFI_OFF);
   SLS_PRINTLN(F("Access Point Stop"));
 }
-
 
 #if LOG_ON
 void printCurrentSettings()
