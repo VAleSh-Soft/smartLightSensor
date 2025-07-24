@@ -158,6 +158,17 @@ void wifiStop()
   SLS_PRINTLN(F("Access Point Stop"));
 }
 
+bool getIgnitionState()
+{
+  bool _state = false;
+  if (xSemaphoreTake(xSemaphore_ign_flag, portMAX_DELAY) == pdTRUE)
+  {
+    _state = digitalRead(IGNITION_PIN);
+    xSemaphoreGive(xSemaphore_ign_flag);
+  }
+  return _state;
+}
+
 #if LOG_ON
 void printCurrentSettings()
 {

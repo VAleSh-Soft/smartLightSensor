@@ -121,6 +121,7 @@ xSemaphoreHandle xSemaphore_relays = xSemaphoreCreateMutex();
 xSemaphoreHandle xSemaphore_eng_run = xSemaphoreCreateMutex();
 xSemaphoreHandle xSemaphore_wifi = xSemaphoreCreateMutex();
 xSemaphoreHandle xSemaphore_eeprom = xSemaphoreCreateMutex();
+xSemaphoreHandle xSemaphore_ign_flag = xSemaphoreCreateMutex();
 
 // ===================================================
 
@@ -148,6 +149,7 @@ void setWiFiState(WiFiModuleState _state);
 WiFiModuleState getWiFiState();
 void startSleep();
 void wifiStop();
+bool getIgnitionState();
 #if LOG_ON
 void printCurrentSettings();
 void printWiFiSetting();

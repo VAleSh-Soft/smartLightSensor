@@ -18,12 +18,7 @@ static const char serverIndex[] PROGMEM =
      <form method='POST' action='' enctype='multipart/form-data'>
          Firmware:<br>
          <input type='file' accept='.bin,.bin.gz' name='firmware'>
-         <input type='submit' value='Update Firmware'>
-     </form>
-     <form method='POST' action='' enctype='multipart/form-data'>
-         FileSystem:<br>
-         <input type='file' accept='.bin,.bin.gz,.image' name='filesystem'>
-         <input type='submit' value='Update FileSystem'>
+         <input type='submit' value='Обновить'>
      </form>
      </body>
      </html>)";

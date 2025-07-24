@@ -162,7 +162,7 @@ void engineRunCheck(void *pvParameters)
   {
     if (!getEngineRunFlag())
     {
-      if (digitalRead(ENGINE_RUN_PIN) && digitalRead(IGNITION_PIN))
+      if (digitalRead(ENGINE_RUN_PIN) && getIgnitionState())
       {
         // поднимать флаг запуска двигателя и, соответственно, включать БС только по истечении времени задержки;
         SLS_PRINTLN(F("The Engine Is Running"));
@@ -189,7 +189,7 @@ void checkingForSleepMode(void *pvParameters)
     if (!_flag)
     {
       // если флаг сброшен, а зажигание выключено - флаг поднять и обнулить счетчик
-      if (!digitalRead(IGNITION_PIN))
+      if (!getIgnitionState())
       {
         _flag = true;
         timer = 0;
@@ -200,7 +200,7 @@ void checkingForSleepMode(void *pvParameters)
     else
     {
       // если флаг поднят, а зажигание включено - сбросить флаг
-      if (digitalRead(IGNITION_PIN))
+      if (getIgnitionState())
       {
         _flag = false;
         SLS_PRINTLN(F("The Ignition Is ON"));
