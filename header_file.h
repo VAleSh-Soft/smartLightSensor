@@ -1,9 +1,9 @@
 #pragma once
 
 #include <WebServer.h>
-#include <HTTPUpdateServer.h>
 #include <shButton.h>
 #include <FastLED.h>
+#include "_updateServer.h"
 
 // ==== Настройки ====================================
 
@@ -16,10 +16,10 @@ constexpr uint8_t IGNITION_PIN = 5;     // пин, на который прих�
 constexpr uint8_t ENGINE_RUN_PIN = 2;   // пин, на который приходит сигнал с вывода D генератора или HIGH при запущенном двигателе
 constexpr uint8_t BTN_MODE_PIN = 4;     // пин кнопки режима работы
 constexpr uint8_t LEDS_DATA_PIN = 3;    // пин выхода для светодиодов
-constexpr uint8_t RELAY_FOR_LB_PIN = 9; // пин реле ближнего света
+constexpr uint8_t RELAY_FOR_LB_PIN = 10; // пин реле ближнего света
 constexpr uint8_t RELAY_FOR_PL_PIN = 8; // пин реле габаритных огней
 #if USE_RELAY_FOR_DRL
-constexpr uint8_t RELAY_FOR_DRL_PIN = 10; // пин реле ходовых огней
+constexpr uint8_t RELAY_FOR_DRL_PIN = 9; // пин реле ходовых огней
 #endif
 
 constexpr uint8_t CONTROL_LEVEL_FOR_LB = HIGH; // уровень управления реле ближнего света; HIGH или LOW
@@ -126,8 +126,14 @@ xSemaphoreHandle xSemaphore_eeprom = xSemaphoreCreateMutex();
 
 // Web интерфейс для устройства
 WebServer HTTP(80);
+
 // сервер обновления по воздуху через web-интерфейс
-HTTPUpdateServer httpUpdater;
+#if LOG_ON
+bool _log_on = true;
+#else
+bool _log_on = false;
+#endif
+shHTTPUpdateServer httpUpdater(_log_on);
 String updateServerPage = "/firmware";
 
 // ==== _function.h ==================================

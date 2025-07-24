@@ -57,10 +57,11 @@ void setLeds(void *pvParameters)
                                                                        : CRGB::Orange);
     }
 
+    WiFiModuleState _state = getWiFiState();
     // если включен WiFi, светодиод мигает с частотой 1 Гц
-    if (wifi_state != SLS_WIFI_OFF)
+    if (_state != SLS_WIFI_OFF)
     {
-      uint8_t max_num = (wifi_state == SLS_WIFI_AP) ? 20 : 2;
+      uint8_t max_num = (_state == SLS_WIFI_AP) ? 20 : 2;
       if (num >= max_num / 2)
       {
         leds[0] = CRGB::Black;
@@ -101,11 +102,12 @@ void lightSensorCheck(void *pvParameters)
     if (getCurrentMode() == SLS_MODE_AUTO && getEngineRunFlag())
     {
       if (sensor_data <= t)
-      { // если уровень снизился до порога включения БС, то включить БС и сбросить флаг отключения БС
+      {
+        // если уровень снизился до порога включения БС, то сбросить флаг отключения БС и включить БС
+        timer = false;
         if (!getRelayState(SLS_RELAY_LB))
         {
           setRelayState(SLS_RELAY_ALL, true);
-          timer = false;
           SLS_PRINTLN(F("The Low Beam Is ON"));
         }
       }
@@ -161,12 +163,13 @@ void engineRunCheck(void *pvParameters)
     if (!getEngineRunFlag())
     {
       if (digitalRead(ENGINE_RUN_PIN) && digitalRead(IGNITION_PIN))
-      { // поднимать флаг запуска двигателя и, соответственно, включать БС только по истечении времени задержки;
+      {
+        // поднимать флаг запуска двигателя и, соответственно, включать БС только по истечении времени задержки;
         SLS_PRINTLN(F("The Engine Is Running"));
         vTaskDelay(read_eeprom_8(EEPROM_INDEX_FOR_TURN_ON_DELAY) * 1000ul);
         setEngineRunFlag(true);
 #if USE_RELAY_FOR_DRL
-        setRelayState(SLS_RELAY_ALL, false); // это чтобы сразу включилось реле ДХО, если оно есть
+        setRelayState(SLS_RELAY_ALL, false); // это чтобы сразу включилось реле ДХО
 #endif
       }
     }
@@ -229,7 +232,7 @@ void wifiModuleManagement(void *pvParameters)
 
   while (1)
   {
-    switch (wifi_state)
+    switch (getWiFiState())
     {
     case SLS_WIFI_CONNECT:
       WiFi.mode(WIFI_AP);
