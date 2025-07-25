@@ -57,8 +57,8 @@ void handleGetConfig()
   DynamicJsonDocument doc(1024);
 
   doc[ap_ip] = IPAddress(read_eeprom_32(EEPROM_INDEX_FOR_AP_IP)).toString();
-  doc[ap_ssid] = read_string_from_eeprom(EEPROM_INDEX_FOR_AP_SSID, 32);
-  doc[ap_pass] = read_string_from_eeprom(EEPROM_INDEX_FOR_AP_PASSWORD, 64);
+  doc[ap_ssid] = getApSsid();
+  doc[ap_pass] = getApPassword();
   doc[turn_on_delay] = read_eeprom_8(EEPROM_INDEX_FOR_TURN_ON_DELAY);
   doc[max_turn_on_delay] = MAX_TURN_ON_DELAY;
   doc[lb_shutown_delay] = read_eeprom_8(EEPROM_INDEX_FOR_LB_SHUTDOWN_DELAY);

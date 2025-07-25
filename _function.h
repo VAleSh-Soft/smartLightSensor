@@ -169,6 +169,16 @@ bool getIgnitionState()
   return _state;
 }
 
+inline char *getApSsid()
+{
+  return read_string_from_eeprom(EEPROM_INDEX_FOR_AP_SSID, MAX_AP_SSID_LENGHT);
+}
+
+inline char *getApPassword()
+{
+  return read_string_from_eeprom(EEPROM_INDEX_FOR_AP_PASSWORD, MAX_AP_PASSWORD_LENGHT);
+}
+
 #if LOG_ON
 void printCurrentSettings()
 {
@@ -196,9 +206,9 @@ void printCurrentSettings()
 void printWiFiSetting()
 {
   SLS_PRINT(F("  AP SSID: "));
-  SLS_PRINTLN(read_string_from_eeprom(EEPROM_INDEX_FOR_AP_SSID, 32));
+  SLS_PRINTLN(getApSsid());
   SLS_PRINT(F("  AP Password: "));
-  SLS_PRINTLN(read_string_from_eeprom(EEPROM_INDEX_FOR_AP_PASSWORD, 64));
+  SLS_PRINTLN(getApPassword());
   SLS_PRINT(F("  AP IP: "));
   SLS_PRINTLN(IPAddress(read_eeprom_32(EEPROM_INDEX_FOR_AP_IP)).toString());
 }

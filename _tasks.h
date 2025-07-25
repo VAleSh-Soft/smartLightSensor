@@ -239,8 +239,7 @@ void wifiModuleManagement(void *pvParameters)
       WiFi.softAPConfig(IPAddress(read_eeprom_32(EEPROM_INDEX_FOR_AP_IP)),
                         IPAddress(read_eeprom_32(EEPROM_INDEX_FOR_AP_IP)),
                         IPAddress(255, 255, 255, 0));
-      if (WiFi.softAP(read_string_from_eeprom(EEPROM_INDEX_FOR_AP_SSID, 32),
-                      read_string_from_eeprom(EEPROM_INDEX_FOR_AP_PASSWORD, 64)))
+      if (WiFi.softAP(getApSsid(), getApPassword()))
       {
 #if LOG_ON
         SLS_PRINTLN(F("Access Point Start"));

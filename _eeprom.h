@@ -46,12 +46,12 @@ void eeprom_init(bool _reset)
     write_eeprom_16(EEPROM_INDEX_FOR_STARTING_SLEEP_DELAY, DEFAULT_RUN_SLEEP_DELAY);
   }
 
-  if (read_eeprom_8(EEPROM_INDEX_FOR_AP_SSID) > 32 || _reset)
+  if (read_eeprom_8(EEPROM_INDEX_FOR_AP_SSID) > MAX_AP_SSID_LENGHT || _reset)
   {
     write_string_to_eeprom(EEPROM_INDEX_FOR_AP_SSID, DEFAULT_AP_SSID);
   }
 
-  if (read_eeprom_8(EEPROM_INDEX_FOR_AP_PASSWORD) > 64 || _reset)
+  if (read_eeprom_8(EEPROM_INDEX_FOR_AP_PASSWORD) > MAX_AP_PASSWORD_LENGHT || _reset)
   {
     write_string_to_eeprom(EEPROM_INDEX_FOR_AP_PASSWORD, DEFAULT_AP_PASSWORD);
   }
