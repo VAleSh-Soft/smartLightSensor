@@ -192,29 +192,20 @@ void fastLedShow(CRGB _col)
 {
   if (xSemaphoreTake(xSemaphore_fastled, portMAX_DELAY) == pdTRUE)
   {
-    setLedColor(_col);
+    leds[0] = _col;
     FastLED.setBrightness(ledBrightness);
     FastLED.show();
     xSemaphoreGive(xSemaphore_fastled);
   }
 }
 
-void setLedColor(CRGB _col)
-{
-  if (xSemaphoreTake(xSemaphore_led_color, portMAX_DELAY) == pdTRUE)
-  {
-    leds[0] = _col;
-    xSemaphoreGive(xSemaphore_led_color);
-  }
-}
-
 bool compareCrgbData(CRGB _col)
 {
   bool _res = false;
-  if (xSemaphoreTake(xSemaphore_led_color, portMAX_DELAY) == pdTRUE)
+  if (xSemaphoreTake(xSemaphore_fastled, portMAX_DELAY) == pdTRUE)
   {
     _res = ((leds[0].r == _col.r) && (leds[0].g == _col.g) && (leds[0].b == _col.b));
-    xSemaphoreGive(xSemaphore_led_color);
+    xSemaphoreGive(xSemaphore_fastled);
   }
   return _res;
 }
