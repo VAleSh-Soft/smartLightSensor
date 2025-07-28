@@ -182,6 +182,7 @@ void fastLedShow()
 {
   if (xSemaphoreTake(xSemaphore_fastled, portMAX_DELAY) == pdTRUE)
   {
+    FastLED.setBrightness(ledBrightness);
     FastLED.show();
     xSemaphoreGive(xSemaphore_fastled);
   }
@@ -192,6 +193,7 @@ void fastLedShow(CRGB _col)
   if (xSemaphoreTake(xSemaphore_fastled, portMAX_DELAY) == pdTRUE)
   {
     setLedColor(_col);
+    FastLED.setBrightness(ledBrightness);
     FastLED.show();
     xSemaphoreGive(xSemaphore_fastled);
   }
@@ -221,7 +223,7 @@ void setLedBrightness(uint8_t _br)
 {
   if (xSemaphoreTake(xSemaphore_fastled, portMAX_DELAY) == pdTRUE)
   {
-    FastLED.setBrightness(_br);
+    ledBrightness = _br;
     xSemaphoreGive(xSemaphore_fastled);
   }
 }
@@ -231,7 +233,7 @@ uint8_t getLedBrightness()
   uint8_t _res;
   if (xSemaphoreTake(xSemaphore_fastled, portMAX_DELAY) == pdTRUE)
   {
-    _res = FastLED.getBrightness();
+    _res = ledBrightness;
     xSemaphoreGive(xSemaphore_fastled);
   }
   return _res;

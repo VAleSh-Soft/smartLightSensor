@@ -90,6 +90,7 @@ enum WiFiModuleState : uint8_t
 // ===================================================
 
 const uint8_t LEDS_NUM = 1;
+uint8_t ledBrightness = MIN_LED_BRIGHTNESS;
 
 CRGB leds[LEDS_NUM]; // индикаторный светодиод;
                      /*
