@@ -165,6 +165,8 @@ void fastLedShow();
 void fastLedShow(CRGB _col);
 void setLedColor(CRGB _col);
 bool compareCrgbData(CRGB _col);
+void setLedBrightness(uint8_t _br);
+uint8_t getLedBrightness();
 #if LOG_ON
 void printCurrentSettings();
 void printWiFiSetting();

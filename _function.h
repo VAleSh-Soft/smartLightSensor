@@ -217,6 +217,26 @@ bool compareCrgbData(CRGB _col)
   return _res;
 }
 
+void setLedBrightness(uint8_t _br)
+{
+  if (xSemaphoreTake(xSemaphore_fastled, portMAX_DELAY) == pdTRUE)
+  {
+    FastLED.setBrightness(_br);
+    xSemaphoreGive(xSemaphore_fastled);
+  }
+}
+
+uint8_t getLedBrightness()
+{
+  uint8_t _res;
+  if (xSemaphoreTake(xSemaphore_fastled, portMAX_DELAY) == pdTRUE)
+  {
+    _res = FastLED.getBrightness();
+    xSemaphoreGive(xSemaphore_fastled);
+  }
+  return _res;
+}
+
 #if LOG_ON
 void printCurrentSettings()
 {

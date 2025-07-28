@@ -147,7 +147,7 @@ void lightSensorCheck(void *pvParameters)
     }
 
     // и здесь же управление яркостью светодиода - вне зависимость от режима работы
-    uint8_t br = 0;
+    uint8_t br = MIN_LED_BRIGHTNESS;
     if (sensor_data <= t)
     {
       br = MIN_LED_BRIGHTNESS;
@@ -156,9 +156,9 @@ void lightSensorCheck(void *pvParameters)
     {
       br = MAX_LED_BRIGHTNESS;
     }
-    if (br != FastLED.getBrightness())
+    if (br != getLedBrightness())
     {
-      FastLED.setBrightness(br);
+      setLedBrightness(br);
       fastLedShow();
     }
 
