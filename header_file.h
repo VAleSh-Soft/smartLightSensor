@@ -125,6 +125,7 @@ xSemaphoreHandle xSemaphore_wifi = xSemaphoreCreateMutex();
 xSemaphoreHandle xSemaphore_eeprom = xSemaphoreCreateMutex();
 xSemaphoreHandle xSemaphore_ign_flag = xSemaphoreCreateMutex();
 xSemaphoreHandle xSemaphore_fastled = xSemaphoreCreateMutex();
+xSemaphoreHandle xSemaphore_led_color = xSemaphoreCreateMutex();
 
 // ===================================================
 
@@ -161,6 +162,9 @@ bool getIgnitionState();
 inline char *getApSsid();
 inline char *getApPassword();
 void fastLedShow();
+void fastLedShow(CRGB _col);
+void setLedColor(CRGB _col);
+bool compareCrgbData(CRGB _col);
 #if LOG_ON
 void printCurrentSettings();
 void printWiFiSetting();

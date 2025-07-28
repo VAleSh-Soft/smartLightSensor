@@ -130,8 +130,7 @@ void startSleep()
 {
   // здесь делаем подготовку ко сну
   vTaskSuspend(xTask_leds);
-  leds[0] = CRGB::Black;
-  fastLedShow();
+  fastLedShow(CRGB::Black);
   pinMode(RELAY_FOR_LB_PIN, INPUT);
   pinMode(RELAY_FOR_PL_PIN, INPUT);
 #if USE_RELAY_FOR_DRL
@@ -186,6 +185,36 @@ void fastLedShow()
     FastLED.show();
     xSemaphoreGive(xSemaphore_fastled);
   }
+}
+
+void fastLedShow(CRGB _col)
+{
+  if (xSemaphoreTake(xSemaphore_fastled, portMAX_DELAY) == pdTRUE)
+  {
+    setLedColor(_col);
+    FastLED.show();
+    xSemaphoreGive(xSemaphore_fastled);
+  }
+}
+
+void setLedColor(CRGB _col)
+{
+  if (xSemaphoreTake(xSemaphore_led_color, portMAX_DELAY) == pdTRUE)
+  {
+    leds[0] = _col;
+    xSemaphoreGive(xSemaphore_led_color);
+  }
+}
+
+bool compareCrgbData(CRGB _col)
+{
+  bool _res = false;
+  if (xSemaphoreTake(xSemaphore_led_color, portMAX_DELAY) == pdTRUE)
+  {
+    _res = ((leds[0].r == _col.r) && (leds[0].g == _col.g) && (leds[0].b == _col.b));
+    xSemaphoreGive(xSemaphore_led_color);
+  }
+  return _res;
 }
 
 #if LOG_ON
