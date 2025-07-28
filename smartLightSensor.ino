@@ -59,7 +59,7 @@ void setup()
 
 #if LOG_ON
   printCurrentSettings();
-  SLS_PRINTLN(F("Device Started"));
+  SLS_PRINTLN(F("Device started"));
   SLS_PRINTLN();
 #endif
 }

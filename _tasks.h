@@ -95,6 +95,7 @@ void lightSensorCheck(void *pvParameters)
   uint16_t t;
   bool timer = false;
   uint16_t timer_counter = 0;
+  bool sensor_flag = false;
 
   const uint32_t SLS_DELAY = 20ul;
 
@@ -103,20 +104,37 @@ void lightSensorCheck(void *pvParameters)
     sensor_data = (sensor_data * 3 + analogRead(LIGHT_SENSOR_PIN)) / 4;
     t = read_eeprom_16(EEPROM_INDEX_FOR_LIGHT_SENSOR_THRESHOLD);
 
+    if (sensor_data <= t)
+    {
+      if (sensor_flag)
+      {
+        SLS_PRINTLN(F("The light sensor is below the switching threshold"));
+      }
+      sensor_flag = false;
+    }
+    else if (sensor_data > (t + LIGHT_SENSOR_THRESHOLD_HISTERESIS))
+    {
+      if (!sensor_flag)
+      {
+        SLS_PRINTLN(F("The light sensor is above the switching threshold"));
+      }
+      sensor_flag = true;
+    }
+
     // тут же управление светом в автоматическом режиме
     if (getCurrentMode() == SLS_MODE_AUTO && getEngineRunFlag())
     {
-      if (sensor_data <= t)
+      if (!sensor_flag)
       {
         // если уровень снизился до порога включения БС, то сбросить флаг отключения БС и включить БС
         timer = false;
         if (!getRelayState(SLS_RELAY_LB))
         {
           setRelayState(SLS_RELAY_ALL, true);
-          SLS_PRINTLN(F("The Low Beam Is ON"));
+          SLS_PRINTLN(F("The low beam is ON"));
         }
       }
-      else if (sensor_data > (t + LIGHT_SENSOR_THRESHOLD_HISTERESIS))
+      else
       { // если уровень превысил порог включения БС, реле БС включено, а флаг отключения БС еще не поднят, поднять его
         if (getRelayState(SLS_RELAY_LB) && !timer)
         {
@@ -132,7 +150,7 @@ void lightSensorCheck(void *pvParameters)
         {
           setRelayState(SLS_RELAY_ALL, false);
           timer = false;
-          SLS_PRINTLN(F("The Low Beam Is OFF"));
+          SLS_PRINTLN(F("The low beam is OFF"));
         }
         else
         {
@@ -143,19 +161,11 @@ void lightSensorCheck(void *pvParameters)
     else if (getRelayState(SLS_RELAY_LB))
     {
       setRelayState(SLS_RELAY_ALL, false);
-      SLS_PRINTLN(F("The Low Beam Is OFF"));
+      SLS_PRINTLN(F("The low beam is OFF"));
     }
 
     // и здесь же управление яркостью светодиода - вне зависимость от режима работы
-    uint8_t br = MIN_LED_BRIGHTNESS;
-    if (sensor_data <= t)
-    {
-      br = MIN_LED_BRIGHTNESS;
-    }
-    else if (sensor_data > (t + LIGHT_SENSOR_THRESHOLD_HISTERESIS))
-    {
-      br = MAX_LED_BRIGHTNESS;
-    }
+    uint8_t br = (sensor_flag) ? MAX_LED_BRIGHTNESS : MIN_LED_BRIGHTNESS;
     if (br != getLedBrightness())
     {
       setLedBrightness(br);
@@ -176,7 +186,7 @@ void engineRunCheck(void *pvParameters)
       if (digitalRead(ENGINE_RUN_PIN) && getIgnitionState())
       {
         // поднимать флаг запуска двигателя и, соответственно, включать БС только по истечении времени задержки;
-        SLS_PRINTLN(F("The Engine Is Running"));
+        SLS_PRINTLN(F("The engine is running"));
         vTaskDelay(read_eeprom_8(EEPROM_INDEX_FOR_TURN_ON_DELAY) * 1000ul);
         setEngineRunFlag(true);
 #if USE_RELAY_FOR_DRL
@@ -204,8 +214,8 @@ void checkingForSleepMode(void *pvParameters)
       {
         _flag = true;
         timer = 0;
-        SLS_PRINTLN(F("The Ignition Is OFF"));
-        SLS_PRINTLN(F("Pause Before Turning ON Sleep Mode"));
+        SLS_PRINTLN(F("The ignition is OFF"));
+        SLS_PRINTLN(F("Pause before turning ON sleep mode"));
       }
     }
     else
@@ -214,8 +224,8 @@ void checkingForSleepMode(void *pvParameters)
       if (getIgnitionState())
       {
         _flag = false;
-        SLS_PRINTLN(F("The Ignition Is ON"));
-        SLS_PRINTLN(F("Canceling Sleep Mode Activation"));
+        SLS_PRINTLN(F("The ignition is ON"));
+        SLS_PRINTLN(F("Canceling sleep mode activation"));
       }
     }
 
@@ -253,7 +263,7 @@ void wifiModuleManagement(void *pvParameters)
       if (WiFi.softAP(getApSsid(), getApPassword()))
       {
 #if LOG_ON
-        SLS_PRINTLN(F("Access Point Start"));
+        SLS_PRINTLN(F("Access point start"));
         printWiFiSetting();
         SLS_PRINTLN();
 #endif

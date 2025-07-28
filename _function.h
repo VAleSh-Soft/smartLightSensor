@@ -13,7 +13,7 @@ WiFiModuleState wifi_state = SLS_WIFI_OFF; // состояние WiFi
 void setCurrentMode(AutoLightSensorMode _mode)
 {
   write_eeprom_8(EEPROM_INDEX_FOR_CURRENT_MODE, uint8_t(_mode));
-  SLS_PRINT(F("Setting The Current Mode: "));
+  SLS_PRINT(F("Setting the current mode: "));
   SLS_PRINTLN(((uint8_t)_mode) ? F("Auto") : F("Manual"));
 }
 
@@ -143,7 +143,7 @@ void startSleep()
     setWiFiState(SLS_WIFI_OFF);
   }
 
-  SLS_PRINTLN(F("Switching To Sleep Mode"));
+  SLS_PRINTLN(F("Switching to sleep mode"));
   SLS_PRINTLN();
   esp_deep_sleep_enable_gpio_wakeup(1 << IGNITION_PIN, ESP_GPIO_WAKEUP_GPIO_HIGH);
   esp_deep_sleep_start();
@@ -154,7 +154,7 @@ void wifiStop()
   HTTP.stop();
   WiFi.softAPdisconnect(true);
   WiFi.mode(WIFI_OFF);
-  SLS_PRINTLN(F("Access Point Stop"));
+  SLS_PRINTLN(F("Access point stop"));
 }
 
 bool getIgnitionState()
@@ -234,21 +234,21 @@ uint8_t getLedBrightness()
 void printCurrentSettings()
 {
   SLS_PRINTLN(F("================================="));
-  SLS_PRINTLN(F("Current Settings:"));
+  SLS_PRINTLN(F("Current settings:"));
   SLS_PRINTLN();
-  SLS_PRINT(F("  Current Mode: "));
+  SLS_PRINT(F("  Current mode: "));
   SLS_PRINTLN(((uint8_t)getCurrentMode()) ? F("Auto") : F("Manual"));
-  SLS_PRINT(F("  Liht Sensor Threshold: "));
+  SLS_PRINT(F("  Liht sensor threshold: "));
   SLS_PRINT(read_eeprom_16(EEPROM_INDEX_FOR_LIGHT_SENSOR_THRESHOLD) / 40);
   SLS_PRINTLN(F(" %"));
-  SLS_PRINT(F("  Low Beam Shutdown Delay (seconds): "));
+  SLS_PRINT(F("  Low beam shutdown delay (seconds): "));
   SLS_PRINTLN(read_eeprom_8(EEPROM_INDEX_FOR_LB_SHUTDOWN_DELAY));
-  SLS_PRINT(F("  Delay For Turn ON (seconds): "));
+  SLS_PRINT(F("  Delay for turn ON (seconds): "));
   SLS_PRINTLN(read_eeprom_8(EEPROM_INDEX_FOR_TURN_ON_DELAY));
-  SLS_PRINT(F("  Delay For Starting Sleep Mode (seconds): "));
+  SLS_PRINT(F("  Delay for starting sleep mode (seconds): "));
   SLS_PRINTLN(read_eeprom_8(EEPROM_INDEX_FOR_STARTING_SLEEP_DELAY));
   SLS_PRINTLN();
-  SLS_PRINTLN(F("Settings For AP:"));
+  SLS_PRINTLN(F("Settings for AP:"));
   SLS_PRINTLN();
   printWiFiSetting();
   SLS_PRINTLN(F("================================="));
@@ -258,7 +258,7 @@ void printWiFiSetting()
 {
   SLS_PRINT(F("  AP SSID: "));
   SLS_PRINTLN(getApSsid());
-  SLS_PRINT(F("  AP Password: "));
+  SLS_PRINT(F("  AP password: "));
   SLS_PRINTLN(getApPassword());
   SLS_PRINT(F("  AP IP: "));
   SLS_PRINTLN(IPAddress(read_eeprom_32(EEPROM_INDEX_FOR_AP_IP)).toString());

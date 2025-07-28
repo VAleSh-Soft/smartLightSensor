@@ -48,7 +48,7 @@ void http_init()
 
 void handleGetConfigPage()
 {
-  SLS_PRINTLN(F("Web Interface Start"));
+  SLS_PRINTLN(F("Web interface start"));
   HTTP.send(200, "text/html", FPSTR(config_page));
 }
 
@@ -71,7 +71,7 @@ void handleGetConfig()
   String _res = "";
   serializeJson(doc, _res);
 
-  SLS_PRINTLN(F("Requested Data For The Web Interface"));
+  SLS_PRINTLN(F("Requested data for the Web interface"));
 
   HTTP.send(200, "text/json", _res);
 }
@@ -106,7 +106,7 @@ void handleSetConfig()
     write_eeprom_8(EEPROM_INDEX_FOR_STARTING_SLEEP_DELAY, doc[run_sleep_delay].as<uint8_t>());
     write_eeprom_16(EEPROM_INDEX_FOR_LIGHT_SENSOR_THRESHOLD, doc[threshold].as<uint16_t>() * 40);
     HTTP.send(200, "text/html", F("<META http-equiv='refresh' content='1;URL=/_close'><p align='center'>Save settings...</p>"));
-    SLS_PRINTLN(F("The Settings are Saved"));
+    SLS_PRINTLN(F("The settings are saved"));
 #if LOG_ON
     printCurrentSettings();
 #endif
