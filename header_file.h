@@ -124,6 +124,7 @@ xSemaphoreHandle xSemaphore_eng_run = xSemaphoreCreateMutex();
 xSemaphoreHandle xSemaphore_wifi = xSemaphoreCreateMutex();
 xSemaphoreHandle xSemaphore_eeprom = xSemaphoreCreateMutex();
 xSemaphoreHandle xSemaphore_ign_flag = xSemaphoreCreateMutex();
+xSemaphoreHandle xSemaphore_fastled = xSemaphoreCreateMutex();
 
 // ===================================================
 
@@ -159,6 +160,7 @@ void wifiStop();
 bool getIgnitionState();
 inline char *getApSsid();
 inline char *getApPassword();
+void fastLedShow();
 #if LOG_ON
 void printCurrentSettings();
 void printWiFiSetting();

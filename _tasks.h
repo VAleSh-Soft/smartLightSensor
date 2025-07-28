@@ -42,7 +42,7 @@ void setLeds(void *pvParameters)
 {
 
   uint8_t num = 0;
-  FastLED.show(); // изначальное включение светодиода
+  fastLedShow(); // изначальное включение светодиода
 
   while (1)
   {
@@ -82,7 +82,7 @@ void setLeds(void *pvParameters)
     if (col.r != leds[0].r || col.g != leds[0].g || col.b != leds[0].b)
     {
       leds[0] = col;
-      FastLED.show();
+      fastLedShow();
     }
 
     vTaskDelay(50);
@@ -160,7 +160,7 @@ void lightSensorCheck(void *pvParameters)
     if (br != FastLED.getBrightness())
     {
       FastLED.setBrightness(br);
-      FastLED.show();
+      fastLedShow();
     }
 
     vTaskDelay(SLS_DELAY);

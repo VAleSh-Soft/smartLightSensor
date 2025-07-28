@@ -131,7 +131,7 @@ void startSleep()
   // здесь делаем подготовку ко сну
   vTaskSuspend(xTask_leds);
   leds[0] = CRGB::Black;
-  FastLED.show();
+  fastLedShow();
   pinMode(RELAY_FOR_LB_PIN, INPUT);
   pinMode(RELAY_FOR_PL_PIN, INPUT);
 #if USE_RELAY_FOR_DRL
@@ -177,6 +177,15 @@ inline char *getApSsid()
 inline char *getApPassword()
 {
   return read_string_from_eeprom(EEPROM_INDEX_FOR_AP_PASSWORD, MAX_AP_PASSWORD_LENGHT);
+}
+
+void fastLedShow()
+{
+  if (xSemaphoreTake(xSemaphore_fastled, portMAX_DELAY) == pdTRUE)
+  {
+    FastLED.show();
+    xSemaphoreGive(xSemaphore_fastled);
+  }
 }
 
 #if LOG_ON
