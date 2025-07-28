@@ -42,19 +42,21 @@ void setLeds(void *pvParameters)
 {
 
   uint8_t num = 0;
+  FastLED.show(); // изначальное включение светодиода
 
   while (1)
   {
+    CRGB col;
     if (getCurrentMode() != SLS_MODE_AUTO)
     {
-      leds[0] = CRGB::Red; // в неавтоматическом режиме светится красным
+      col = CRGB::Red; // в неавтоматическом режиме светится красным
     }
     else
     {
       // в автоматическом режиме светится: зеленым - двигатель не запущен; синим - двигатель запущен, включен ближний свет; оранжевым - двигатель запущен, ближний свет выключен
-      leds[0] = (!getEngineRunFlag()) ? CRGB::Green
-                                      : ((getRelayState(SLS_RELAY_LB)) ? CRGB::Blue
-                                                                       : CRGB::Orange);
+      col = (!getEngineRunFlag()) ? CRGB::Green
+                                  : ((getRelayState(SLS_RELAY_LB)) ? CRGB::Blue
+                                                                   : CRGB::Orange);
     }
 
     WiFiModuleState _state = getWiFiState();
@@ -64,7 +66,7 @@ void setLeds(void *pvParameters)
       uint8_t max_num = (_state == SLS_WIFI_AP) ? 20 : 2;
       if (num >= max_num / 2)
       {
-        leds[0] = CRGB::Black;
+        col = CRGB::Black;
       }
 
       if (++num >= max_num)
@@ -77,7 +79,11 @@ void setLeds(void *pvParameters)
       num = 0;
     }
 
-    FastLED.show();
+    if (col != leds[0])
+    {
+      leds[0] = col;
+      FastLED.show();
+    }
 
     vTaskDelay(50);
   }
@@ -142,13 +148,19 @@ void lightSensorCheck(void *pvParameters)
     }
 
     // и здесь же управление яркостью светодиода - вне зависимость от режима работы
+    uint8_t br = 0;
     if (sensor_data <= t)
     {
-      FastLED.setBrightness(MIN_LED_BRIGHTNESS);
+      br = MIN_LED_BRIGHTNESS;
     }
     else if (sensor_data > (t + LIGHT_SENSOR_THRESHOLD_HISTERESIS))
     {
-      FastLED.setBrightness(MAX_LED_BRIGHTNESS);
+      br = MAX_LED_BRIGHTNESS;
+    }
+    if (br != FastLED.getBrightness())
+    {
+      FastLED.setBrightness(br);
+      FastLED.show();
     }
 
     vTaskDelay(SLS_DELAY);
