@@ -79,7 +79,7 @@ void setLeds(void *pvParameters)
       num = 0;
     }
 
-    if (col != leds[0])
+    if (col.r != leds[0].r || col.g != leds[0].g || col.b != leds[0].b)
     {
       leds[0] = col;
       FastLED.show();

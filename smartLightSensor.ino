@@ -39,7 +39,7 @@ void setup()
   while (!digitalRead(BTN_MODE_PIN))       // ждем отпускания кнопки, если она была нажата при включении
   {
     leds[0] = CRGB::White; // если кнопка нажата, включаем белый цвет - пора отпускать
-    FastLED.setBrightness(50);
+    FastLED.setBrightness(MIN_LED_BRIGHTNESS);
     FastLED.show();
     delay(100);
   }
