@@ -178,16 +178,6 @@ inline char *getApPassword()
   return read_string_from_eeprom(EEPROM_INDEX_FOR_AP_PASSWORD, MAX_AP_PASSWORD_LENGHT);
 }
 
-void fastLedShow()
-{
-  if (xSemaphoreTake(xSemaphore_fastled, portMAX_DELAY) == pdTRUE)
-  {
-    FastLED.setBrightness(ledBrightness);
-    FastLED.show();
-    xSemaphoreGive(xSemaphore_fastled);
-  }
-}
-
 void fastLedShow(CRGB _col)
 {
   if (xSemaphoreTake(xSemaphore_fastled, portMAX_DELAY) == pdTRUE)
@@ -199,17 +189,6 @@ void fastLedShow(CRGB _col)
   }
 }
 
-bool compareCrgbData(CRGB _col)
-{
-  bool _res = false;
-  if (xSemaphoreTake(xSemaphore_fastled, portMAX_DELAY) == pdTRUE)
-  {
-    _res = ((leds[0].r == _col.r) && (leds[0].g == _col.g) && (leds[0].b == _col.b));
-    xSemaphoreGive(xSemaphore_fastled);
-  }
-  return _res;
-}
-
 void setLedBrightness(uint8_t _br)
 {
   if (xSemaphoreTake(xSemaphore_fastled, portMAX_DELAY) == pdTRUE)
@@ -217,17 +196,6 @@ void setLedBrightness(uint8_t _br)
     ledBrightness = _br;
     xSemaphoreGive(xSemaphore_fastled);
   }
-}
-
-uint8_t getLedBrightness()
-{
-  uint8_t _res;
-  if (xSemaphoreTake(xSemaphore_fastled, portMAX_DELAY) == pdTRUE)
-  {
-    _res = ledBrightness;
-    xSemaphoreGive(xSemaphore_fastled);
-  }
-  return _res;
 }
 
 #if LOG_ON

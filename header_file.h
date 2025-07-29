@@ -43,7 +43,7 @@ constexpr uint16_t DEFAULT_RUN_SLEEP_DELAY = 10;  // задержка по ум�
 
 constexpr uint16_t LIGHT_SENSOR_THRESHOLD_HISTERESIS = 200; // гистрезис порога датчика света
 
-constexpr uint8_t MAX_LED_BRIGHTNESS = 250; // максимальная яркость светодиода
+constexpr uint8_t MAX_LED_BRIGHTNESS = 255; // максимальная яркость светодиода
 constexpr uint8_t MIN_LED_BRIGHTNESS = 50;  // минимальная яркость светодиода
 
 constexpr char *DEFAULT_AP_SSID = "shSmartLight"; // имя точки доступа по умолчанию
@@ -161,11 +161,8 @@ void wifiStop();
 bool getIgnitionState();
 inline char *getApSsid();
 inline char *getApPassword();
-void fastLedShow();
 void fastLedShow(CRGB _col);
-bool compareCrgbData(CRGB _col);
 void setLedBrightness(uint8_t _br);
-uint8_t getLedBrightness();
 #if LOG_ON
 void printCurrentSettings();
 void printWiFiSetting();

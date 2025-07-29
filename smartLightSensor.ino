@@ -17,10 +17,9 @@ void setup()
 
   // =================================================
 
-  FastLED.addLeds<WS2811, LEDS_DATA_PIN, RGB>(leds, LEDS_NUM).setCorrection(Typical8mmPixel);
-  leds[0] = CRGB::Black;
-  FastLED.setBrightness(0);
-  FastLED.show();
+  FastLED.addLeds<WS2811, LEDS_DATA_PIN, RGB>(leds, LEDS_NUM).setCorrection(TypicalPixelString);
+  setLedBrightness(MIN_LED_BRIGHTNESS);
+  fastLedShow(CRGB::Black);
 
   // =================================================
 
@@ -38,9 +37,7 @@ void setup()
   eeprom_init(!digitalRead(BTN_MODE_PIN)); // при зажатой при старте кнопке настройки сбрасываются к настройкам по умолчанию
   while (!digitalRead(BTN_MODE_PIN))       // ждем отпускания кнопки, если она была нажата при включении
   {
-    leds[0] = CRGB::White; // если кнопка нажата, включаем белый цвет - пора отпускать
-    FastLED.setBrightness(MIN_LED_BRIGHTNESS);
-    FastLED.show();
+    fastLedShow(CRGB::White); // если кнопка нажата, включаем белый цвет - пора отпускать
     delay(100);
   }
 

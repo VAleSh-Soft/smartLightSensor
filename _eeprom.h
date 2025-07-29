@@ -15,7 +15,7 @@ void eeprom_init(bool _reset)
 
   if (_reset)
   {
-    SLS_PRINTLN(F("Resetting the settings to default"));
+    SLS_PRINTLN(F("Resetting the settings to default values"));
   }
   
 

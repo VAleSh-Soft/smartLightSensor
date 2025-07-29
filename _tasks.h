@@ -42,7 +42,7 @@ void setLeds(void *pvParameters)
 {
 
   uint8_t num = 0;
-  fastLedShow(); // изначальное включение светодиода
+  const uint32_t LED_DELAY = 50ul;
 
   while (1)
   {
@@ -60,10 +60,10 @@ void setLeds(void *pvParameters)
     }
 
     WiFiModuleState _state = getWiFiState();
-    // если включен WiFi, светодиод мигает с частотой 1 Гц
+    // при создании точки доступа светодиод мигает с частотой 10 Гц, в процессе работы точки доступа - 1 Гц
     if (_state != SLS_WIFI_OFF)
     {
-      uint8_t max_num = (_state == SLS_WIFI_AP) ? 20 : 2;
+      uint8_t max_num = (_state == SLS_WIFI_AP) ? 1000ul / LED_DELAY : 100ul / LED_DELAY;
       if (num >= max_num / 2)
       {
         col = CRGB::Black;
@@ -79,12 +79,9 @@ void setLeds(void *pvParameters)
       num = 0;
     }
 
-    if (!compareCrgbData(col))
-    {
-      fastLedShow(col);
-    }
+    fastLedShow(col);
 
-    vTaskDelay(50);
+    vTaskDelay(LED_DELAY);
   }
   vTaskDelete(NULL);
 }
@@ -97,7 +94,7 @@ void lightSensorCheck(void *pvParameters)
   uint16_t timer_counter = 0;
   bool sensor_flag = false;
 
-  const uint32_t SLS_DELAY = 20ul;
+  const uint32_t LS_DELAY = 20ul;
 
   while (1)
   {
@@ -128,7 +125,7 @@ void lightSensorCheck(void *pvParameters)
       {
         // если уровень снизился до порога включения БС, то сбросить флаг отключения БС и включить БС
         timer = false;
-        if (!getRelayState(SLS_RELAY_LB))
+        if (!getRelayState(SLS_RELAY_LB) && getIgnitionState())
         {
           setRelayState(SLS_RELAY_ALL, true);
           SLS_PRINTLN(F("The low beam is ON"));
@@ -146,7 +143,7 @@ void lightSensorCheck(void *pvParameters)
       // тут же управление таймером отключения БС, если поднят флаг таймера
       if (timer)
       {
-        if (timer_counter >= read_eeprom_8(EEPROM_INDEX_FOR_LB_SHUTDOWN_DELAY) * 1000ul / SLS_DELAY)
+        if (timer_counter >= read_eeprom_8(EEPROM_INDEX_FOR_LB_SHUTDOWN_DELAY) * 1000ul / LS_DELAY)
         {
           setRelayState(SLS_RELAY_ALL, false);
           timer = false;
@@ -166,13 +163,9 @@ void lightSensorCheck(void *pvParameters)
 
     // и здесь же управление яркостью светодиода - вне зависимость от режима работы
     uint8_t br = (sensor_flag) ? MAX_LED_BRIGHTNESS : MIN_LED_BRIGHTNESS;
-    if (br != getLedBrightness())
-    {
-      setLedBrightness(br);
-      fastLedShow();
-    }
+    setLedBrightness(br);
 
-    vTaskDelay(SLS_DELAY);
+    vTaskDelay(LS_DELAY);
   }
   vTaskDelete(NULL);
 }
