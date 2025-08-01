@@ -109,8 +109,18 @@ CRGB leds[LEDS_NUM]; // индикаторный светодиод;
 // ===================================================
 
 #if LOG_ON
-#define SLS_PRINTLN(x) Serial.println(x)
-#define SLS_PRINT(x) Serial.print(x)
+#define SLS_PRINTLN(x)                                          \
+  if (xSemaphoreTake(xSemaphore_uart, portMAX_DELAY) == pdTRUE) \
+  {                                                             \
+    Serial.println(x);                                          \
+    xSemaphoreGive(xSemaphore_uart);                            \
+  }
+#define SLS_PRINT(x)                                            \
+  if (xSemaphoreTake(xSemaphore_uart, portMAX_DELAY) == pdTRUE) \
+  {                                                             \
+    Serial.print(x);                                          \
+    xSemaphoreGive(xSemaphore_uart);                            \
+  }
 #else
 #define SLS_PRINTLN(x)
 #define SLS_PRINT(x)
@@ -126,6 +136,7 @@ xSemaphoreHandle xSemaphore_wifi = xSemaphoreCreateMutex();
 xSemaphoreHandle xSemaphore_eeprom = xSemaphoreCreateMutex();
 xSemaphoreHandle xSemaphore_ign_flag = xSemaphoreCreateMutex();
 xSemaphoreHandle xSemaphore_fastled = xSemaphoreCreateMutex();
+xSemaphoreHandle xSemaphore_uart = xSemaphoreCreateMutex();
 
 // ===================================================
 
