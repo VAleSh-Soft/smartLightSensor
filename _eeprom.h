@@ -17,7 +17,6 @@ void eeprom_init(bool _reset)
   {
     SLS_PRINTLN(F("Resetting the settings to default values"));
   }
-  
 
   if (read_eeprom_16(EEPROM_INDEX_FOR_LIGHT_SENSOR_THRESHOLD) > 4095 ||
       read_eeprom_16(EEPROM_INDEX_FOR_LIGHT_SENSOR_THRESHOLD) == 0 || _reset)
@@ -60,6 +59,12 @@ void eeprom_init(bool _reset)
       read_eeprom_32(EEPROM_INDEX_FOR_AP_IP) == 0 || _reset)
   {
     write_eeprom_32(EEPROM_INDEX_FOR_AP_IP, (uint32_t)IPAddress(DEFAULT_AP_IP));
+  }
+
+  if (read_eeprom_8(EEPROM_INDEX_FOR_LED_BRIGHTNESS) > 10 ||
+      read_eeprom_8(EEPROM_INDEX_FOR_LED_BRIGHTNESS) == 0 || _reset)
+  {
+    write_eeprom_8(EEPROM_INDEX_FOR_LED_BRIGHTNESS, 10);
   }
 }
 

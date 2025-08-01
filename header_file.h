@@ -43,7 +43,7 @@ constexpr uint16_t DEFAULT_RUN_SLEEP_DELAY = 10;  // задержка по ум�
 
 constexpr uint16_t LIGHT_SENSOR_THRESHOLD_HISTERESIS = 200; // гистрезис порога датчика света (для 12 бит ADC это примерно 5%)
 
-constexpr uint8_t MAX_LED_BRIGHTNESS = 255; // максимальная яркость светодиода (максимум 255)
+constexpr uint8_t MAX_LED_BRIGHTNESS = 250; // максимальная яркость светодиода (максимум 255)
 constexpr uint8_t MIN_LED_BRIGHTNESS = 50;  // минимальная яркость светодиода (0 - полное отключение)
 
 constexpr char *DEFAULT_AP_SSID = "shSmartLight"; // имя точки доступа по умолчанию
@@ -60,6 +60,7 @@ constexpr char *DEFAULT_AP_IP = "192.168.4.1";    // ip адрес точки д
 #define EEPROM_INDEX_FOR_AP_SSID 8                // индекс для хранения имени точки доступа, 33 байта; первый байт - размер строки
 #define EEPROM_INDEX_FOR_AP_PASSWORD 41           // индекс для хранения пароля точки доступа, 65 байт; первый байт - размер строки
 #define EEPROM_INDEX_FOR_AP_IP 106                // индекс для хранения ip адреса точки доступа, uint32_t
+#define EEPROM_INDEX_FOR_LED_BRIGHTNESS 110       // индекс для хранения уровня яркости индикаторного светодиода, uint8_t
 
 // ===================================================
 
@@ -118,7 +119,7 @@ CRGB leds[LEDS_NUM]; // индикаторный светодиод;
 #define SLS_PRINT(x)                                            \
   if (xSemaphoreTake(xSemaphore_uart, portMAX_DELAY) == pdTRUE) \
   {                                                             \
-    Serial.print(x);                                          \
+    Serial.print(x);                                            \
     xSemaphoreGive(xSemaphore_uart);                            \
   }
 #else
@@ -213,3 +214,4 @@ void handleGetConfigPage();
 void handleGetConfig();
 void handleSetConfig();
 void handleClose();
+void handleSetLedBrightness();
