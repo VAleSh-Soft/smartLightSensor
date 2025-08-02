@@ -61,10 +61,10 @@ void eeprom_init(bool _reset)
     write_eeprom_32(EEPROM_INDEX_FOR_AP_IP, (uint32_t)IPAddress(DEFAULT_AP_IP));
   }
 
-  if (read_eeprom_8(EEPROM_INDEX_FOR_LED_BRIGHTNESS) > 10 ||
-      read_eeprom_8(EEPROM_INDEX_FOR_LED_BRIGHTNESS) == 0 || _reset)
+  if (read_eeprom_8(EEPROM_INDEX_FOR_LED_BRIGHTNESS_LEVEL) > 10 ||
+      read_eeprom_8(EEPROM_INDEX_FOR_LED_BRIGHTNESS_LEVEL) == 0 || _reset)
   {
-    write_eeprom_8(EEPROM_INDEX_FOR_LED_BRIGHTNESS, 10);
+    write_eeprom_8(EEPROM_INDEX_FOR_LED_BRIGHTNESS_LEVEL, 10);
   }
 }
 

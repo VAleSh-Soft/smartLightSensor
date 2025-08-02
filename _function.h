@@ -5,8 +5,8 @@
 
 // ===================================================
 
-bool engine_run_flag = false;                  // флаг запуска двигателя
-WiFiModuleState wifi_state = SLS_WIFI_OFF;     // состояние WiFi
+bool engine_run_flag = false;              // флаг запуска двигателя
+WiFiModuleState wifi_state = SLS_WIFI_OFF; // состояние WiFi
 
 // ===================================================
 
@@ -193,7 +193,14 @@ void setLedBrightness(uint8_t _br)
 {
   if (xSemaphoreTake(xSemaphore_fastled, portMAX_DELAY) == pdTRUE)
   {
-    ledBrightness = uint8_t((uint16_t)_br * read_eeprom_8(EEPROM_INDEX_FOR_LED_BRIGHTNESS) / 10);
+    uint8_t level = read_eeprom_8(EEPROM_INDEX_FOR_LED_BRIGHTNESS_LEVEL);
+    if (level == 0 || level > 10)
+    {
+      level = (level > 10) ? 10 : 1;
+      write_eeprom_8(EEPROM_INDEX_FOR_LED_BRIGHTNESS_LEVEL, level);
+    }
+
+    ledBrightness = uint8_t((uint16_t)_br * level / 10);
     xSemaphoreGive(xSemaphore_fastled);
   }
 }

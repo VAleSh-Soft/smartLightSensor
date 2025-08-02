@@ -70,7 +70,7 @@ void handleGetConfig()
   doc[run_sleep_delay] = read_eeprom_8(EEPROM_INDEX_FOR_STARTING_SLEEP_DELAY);
   doc[max_run_sleep_delay] = MAX_RUN_SLEEP_DELAY;
   doc[threshold] = read_eeprom_16(EEPROM_INDEX_FOR_LIGHT_SENSOR_THRESHOLD) / 40;
-  doc[led_brightness] = read_eeprom_8(EEPROM_INDEX_FOR_LED_BRIGHTNESS);
+  doc[led_brightness] = read_eeprom_8(EEPROM_INDEX_FOR_LED_BRIGHTNESS_LEVEL);
 
   String _res = "";
   serializeJson(doc, _res);
@@ -109,8 +109,8 @@ void handleSetConfig()
     write_eeprom_8(EEPROM_INDEX_FOR_LB_SHUTDOWN_DELAY, doc[lb_shutown_delay].as<uint8_t>());
     write_eeprom_8(EEPROM_INDEX_FOR_STARTING_SLEEP_DELAY, doc[run_sleep_delay].as<uint8_t>());
     write_eeprom_16(EEPROM_INDEX_FOR_LIGHT_SENSOR_THRESHOLD, doc[threshold].as<uint16_t>() * 40);
-    write_eeprom_8(EEPROM_INDEX_FOR_LED_BRIGHTNESS, doc[led_brightness].as<uint8_t>());
-    HTTP.send(200, "text/html", F("<META http-equiv='refresh' content='1;URL=/_close'><p align='center'>Save settings...</p>"));
+    write_eeprom_8(EEPROM_INDEX_FOR_LED_BRIGHTNESS_LEVEL, doc[led_brightness].as<uint8_t>());
+    HTTP.send(200, "text/html", F("<META http-equiv='refresh' content='1;URL=/_close'><p align='center'>Saving settings and disabling WiFi...</p>"));
     SLS_PRINTLN();
     SLS_PRINTLN(F("The settings are saved"));
 #if LOG_ON
@@ -149,7 +149,7 @@ void handleSetLedBrightness()
     {
       _br = 1;
     }
-    write_eeprom_8(EEPROM_INDEX_FOR_LED_BRIGHTNESS, _br);
+    write_eeprom_8(EEPROM_INDEX_FOR_LED_BRIGHTNESS_LEVEL, _br);
     HTTP.send(200, "text/plain", F("OK"));
   }
 }

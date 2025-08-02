@@ -60,7 +60,7 @@ constexpr char *DEFAULT_AP_IP = "192.168.4.1";    // ip адрес точки д
 #define EEPROM_INDEX_FOR_AP_SSID 8                // индекс для хранения имени точки доступа, 33 байта; первый байт - размер строки
 #define EEPROM_INDEX_FOR_AP_PASSWORD 41           // индекс для хранения пароля точки доступа, 65 байт; первый байт - размер строки
 #define EEPROM_INDEX_FOR_AP_IP 106                // индекс для хранения ip адреса точки доступа, uint32_t
-#define EEPROM_INDEX_FOR_LED_BRIGHTNESS 110       // индекс для хранения уровня яркости индикаторного светодиода, uint8_t
+#define EEPROM_INDEX_FOR_LED_BRIGHTNESS_LEVEL 110 // индекс для хранения уровня яркости индикаторного светодиода, uint8_t
 
 // ===================================================
 
