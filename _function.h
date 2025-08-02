@@ -205,6 +205,44 @@ void setLedBrightness(uint8_t _br)
   }
 }
 
+void wifiModuleManagement()
+{
+  static uint32_t slsDelay = 100ul;
+
+  switch (getWiFiState())
+  {
+  case SLS_WIFI_CONNECT:
+    WiFi.mode(WIFI_AP);
+    WiFi.softAPConfig(IPAddress(read_eeprom_32(EEPROM_INDEX_FOR_AP_IP)),
+                      IPAddress(read_eeprom_32(EEPROM_INDEX_FOR_AP_IP)),
+                      IPAddress(255, 255, 255, 0));
+    if (WiFi.softAP(getApSsid(), getApPassword()))
+    {
+#if LOG_ON
+      SLS_PRINTLN(F("Access point start"));
+      printWiFiSetting();
+      SLS_PRINTLN();
+#endif
+      slsDelay = 1ul; // в режиме точки доступа крутим быстро для нормальной реакции сервера
+      HTTP.begin();
+      setWiFiState(SLS_WIFI_AP);
+    }
+    break;
+  case SLS_WIFI_OFF:
+    if (WiFi.getMode() != WIFI_OFF)
+    {
+      wifiStop();
+      slsDelay = 100ul; // если точка доступа отключена, замедляемся
+    }
+    break;
+  case SLS_WIFI_AP:
+    HTTP.handleClient();
+    break;
+  }
+
+  delay(slsDelay);
+}
+
 #if LOG_ON
 void printCurrentSettings()
 {

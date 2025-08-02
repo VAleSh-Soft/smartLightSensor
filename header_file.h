@@ -175,6 +175,7 @@ inline char *getApSsid();
 inline char *getApPassword();
 void fastLedShow(CRGB _col);
 void setLedBrightness(uint8_t _br);
+void wifiModuleManagement();
 #if LOG_ON
 void printCurrentSettings();
 void printWiFiSetting();
@@ -193,7 +194,6 @@ void engineRunCheck(void *pvParameters);
 // переход в спящий режим
 void checkingForSleepMode(void *pvParameters);
 // управление WiFi
-void wifiModuleManagement(void *pvParameters);
 
 // ==== _eeprom.h ====================================
 
