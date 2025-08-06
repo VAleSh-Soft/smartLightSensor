@@ -164,6 +164,7 @@ void setCurrentMode(AutoLightSensorMode _mode);
 AutoLightSensorMode getCurrentMode();
 void setEngineRunFlag(bool _flag);
 bool getEngineRunFlag();
+bool checkEngineRunState();
 void setRelayState(RelayState _rel, bool _state);
 uint8_t getRelayState(RelayState _rel);
 void setWiFiState(WiFiModuleState _state);
