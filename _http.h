@@ -36,7 +36,7 @@ void http_init()
   HTTP.on("/", HTTP_GET, handleGetConfigPage);
   // ответ 404
   HTTP.onNotFound([]()
-                  { HTTP.send(404, "text/plan", F("404. Ooops!!! File not found.")); });
+                  { HTTP.send(404, "text/plain", F("404. Ooops!!! File not found.")); });
   // запрос текущих настроек
   HTTP.on("/_getconfig", HTTP_GET, handleGetConfig);
   // сохранение настроек
