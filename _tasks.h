@@ -12,7 +12,7 @@ void btnCheck(void *pvParameters)
     case BTN_ONECLICK: // короткий клик включает автоматический режим работы
       if (getCurrentMode() != SLS_MODE_AUTO)
       {
-        checkEngineRunState();
+        setEngineRunFlag(checkEngineRunState());
         setCurrentMode(SLS_MODE_AUTO);
       }
       break;
@@ -181,6 +181,8 @@ void engineRunCheck(void *pvParameters)
       {
         // поднимать флаг запуска двигателя и, соответственно, включать БС только по истечении времени задержки;
         SLS_PRINTLN(F("The engine is running"));
+        SLS_PRINT(F("Delay for turn ON (seconds): "));
+        SLS_PRINTLN(read_eeprom_8(EEPROM_INDEX_FOR_TURN_ON_DELAY));
         vTaskDelay(read_eeprom_8(EEPROM_INDEX_FOR_TURN_ON_DELAY) * 1000ul);
         setEngineRunFlag(true);
 #if USE_RELAY_FOR_DRL

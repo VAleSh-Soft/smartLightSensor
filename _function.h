@@ -44,12 +44,13 @@ bool getEngineRunFlag()
 
 bool checkEngineRunState()
 {
+  bool res = false;
   if (xSemaphoreTake(xSemaphore_eng_run, portMAX_DELAY) == pdTRUE)
   {
-    engine_run_flag = digitalRead(ENGINE_RUN_PIN);
+    res = digitalRead(ENGINE_RUN_PIN);
     xSemaphoreGive(xSemaphore_eng_run);
   }
-  return engine_run_flag;
+  return res;
 }
 
 void setRelayState(RelayState _rel, bool _state)
