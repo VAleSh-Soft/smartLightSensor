@@ -7,8 +7,29 @@
 
 bool engine_run_flag = false;              // флаг запуска двигателя
 WiFiModuleState wifi_state = SLS_WIFI_OFF; // состояние WiFi
+uint16_t sensor_data;                      // данные с датчика освещенности
 
 // ===================================================
+
+void checkLightSensor()
+{
+  if (xSemaphoreTake(xSemaphore_l_sensor, portMAX_DELAY) == pdTRUE)
+  {
+    sensor_data = (sensor_data * 3 + analogRead(LIGHT_SENSOR_PIN)) / 4;
+    xSemaphoreGive(xSemaphore_l_sensor);
+  }
+}
+
+uint16_t getLightSensorData()
+{
+  uint16_t _data = 0;
+  if (xSemaphoreTake(xSemaphore_l_sensor, portMAX_DELAY) == pdTRUE)
+  {
+    _data = sensor_data;
+    xSemaphoreGive(xSemaphore_l_sensor);
+  }
+  return _data;
+}
 
 void setCurrentMode(AutoLightSensorMode _mode)
 {

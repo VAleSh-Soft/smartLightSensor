@@ -7,7 +7,7 @@
 
 // ==== Настройки ====================================
 
-#define LOG_ON 0             // использовать вывод отладочной информации через UART
+#define LOG_ON 1             // использовать вывод отладочной информации через UART
 #define USE_RELAY_FOR_DRL 0  // использовать реле для ходовых огней; 0 - не использовать, 1 - использовать реле (ДХО будут включаться при старте двигателя с заданной в настройках задержкой);
 #define USE_DRL_MANAGEMENT 0 // управлять ходовыми огнями; это нужно, если ходовые огни не отключаются автоматически при включении ближнего света; 0 - не управлять, 1 - управлять (ДХО будут включаться и выключаться в зависимости от состояния реле габаритных огней)
 
@@ -138,6 +138,7 @@ xSemaphoreHandle xSemaphore_eeprom = xSemaphoreCreateMutex();
 xSemaphoreHandle xSemaphore_ign_flag = xSemaphoreCreateMutex();
 xSemaphoreHandle xSemaphore_fastled = xSemaphoreCreateMutex();
 xSemaphoreHandle xSemaphore_uart = xSemaphoreCreateMutex();
+xSemaphoreHandle xSemaphore_l_sensor = xSemaphoreCreateMutex();
 
 // ===================================================
 
@@ -160,6 +161,8 @@ String updateServerPage = "/firmware";
 
 // ==== _function.h ==================================
 
+void checkLightSensor();
+uint16_t getLightSensorData();
 void setCurrentMode(AutoLightSensorMode _mode);
 AutoLightSensorMode getCurrentMode();
 void setEngineRunFlag(bool _flag);
@@ -213,6 +216,7 @@ char *read_string_from_eeprom(uint16_t _index, const uint8_t _max_len);
 void http_init();
 void handleGetConfigPage();
 void handleGetConfig();
+void handleGetState();
 void handleSetConfig();
 void handleClose();
 void handleSetLedBrightness();

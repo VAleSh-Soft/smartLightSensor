@@ -89,7 +89,6 @@ void setLeds(void *pvParameters)
 
 void lightSensorCheck(void *pvParameters)
 {
-  uint16_t sensor_data = analogRead(LIGHT_SENSOR_PIN);
   uint16_t t;
   bool timer = false;
   uint16_t timer_counter = 0;
@@ -99,10 +98,10 @@ void lightSensorCheck(void *pvParameters)
 
   while (1)
   {
-    sensor_data = (sensor_data * 3 + analogRead(LIGHT_SENSOR_PIN)) / 4;
+    checkLightSensor();
     t = read_eeprom_16(EEPROM_INDEX_FOR_LIGHT_SENSOR_THRESHOLD);
 
-    if (sensor_data <= t)
+    if (getLightSensorData() <= t)
     {
       if (sensor_flag)
       {
@@ -110,7 +109,7 @@ void lightSensorCheck(void *pvParameters)
       }
       sensor_flag = false;
     }
-    else if (sensor_data > (t + LIGHT_SENSOR_THRESHOLD_HISTERESIS))
+    else if (getLightSensorData() > (t + LIGHT_SENSOR_THRESHOLD_HISTERESIS))
     {
       if (!sensor_flag)
       {

@@ -27,6 +27,11 @@ const String lb_shutown_delay = "lb_shutown_delay";
 const String max_lb_shutown_delay = "max_lb_shutown_delay";
 const String min_lb_shutown_delay = "min_lb_shutown_delay";
 const String led_brightness = "led_br";
+const String s_data = "s_data";
+const String auto_state = "auto_state";
+const String ign_state = "ign_state";
+const String eng_state = "eng_state";
+const String lb_state = "lb_state";
 
 // ===================================================
 
@@ -39,6 +44,8 @@ void http_init()
                   { HTTP.send(404, "text/plain", F("404. Ooops!!! File not found.")); });
   // запрос текущих настроек
   HTTP.on("/_getconfig", HTTP_GET, handleGetConfig);
+  // запрос текущего состояния модуля
+  HTTP.on("/_getstate", HTTP_GET, handleGetState);
   // сохранение настроек
   HTTP.on("/_setconfig", HTTP_POST, handleSetConfig);
   // изменение яркости светодиода
@@ -76,6 +83,22 @@ void handleGetConfig()
   serializeJson(doc, _res);
 
   SLS_PRINTLN(F("Requested data for the Web interface"));
+
+  HTTP.send(200, "text/json", _res);
+}
+
+void handleGetState()
+{
+  DynamicJsonDocument doc(1024);
+
+  doc[s_data] = getLightSensorData() / 40;
+  doc[auto_state] = (uint8_t)getCurrentMode();
+  doc[ign_state] = (uint8_t)getIgnitionState();
+  doc[eng_state] = (uint8_t)checkEngineRunState();
+  doc[lb_state] = getRelayState(SLS_RELAY_LB);
+
+  String _res = "";
+  serializeJson(doc, _res);
 
   HTTP.send(200, "text/json", _res);
 }

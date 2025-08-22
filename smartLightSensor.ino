@@ -33,6 +33,7 @@ void setup()
 
   // =================================================
 
+  sensor_data = analogRead(LIGHT_SENSOR_PIN);
   http_init();
   eeprom_init(!digitalRead(BTN_MODE_PIN)); // при зажатой при старте кнопке настройки сбрасываются к настройкам по умолчанию
   while (!digitalRead(BTN_MODE_PIN))       // ждем отпускания кнопки, если она была нажата при включении
