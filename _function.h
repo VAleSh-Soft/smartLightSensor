@@ -16,6 +16,11 @@ void checkLightSensor()
   if (xSemaphoreTake(xSemaphore_l_sensor, portMAX_DELAY) == pdTRUE)
   {
     sensor_data = (sensor_data * 3 + analogRead(LIGHT_SENSOR_PIN)) / 4;
+    if (sensor_data > 4000)
+    {
+      // чтобы больше 100% не показывало ))
+      sensor_data = 4000;
+    }
     xSemaphoreGive(xSemaphore_l_sensor);
   }
 }
