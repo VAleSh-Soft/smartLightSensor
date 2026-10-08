@@ -76,7 +76,7 @@ enum RelayState : uint8_t
   SLS_RELAY_LB,  // реле ближнего света
   SLS_RELAY_PL   // реле габаритных огней
 #if USE_RELAY_FOR_DRL
-  ,
+      ,
   SLS_RELAY_DRL // реле ходовых огней
 #endif
 };
@@ -213,7 +213,7 @@ char *read_string_from_eeprom(uint16_t _index, const uint8_t _max_len);
 
 // ==== _http.h ======================================
 
-void http_init();
+void http_init(WebServer *_http);
 void handleGetConfigPage();
 void handleGetConfig();
 void handleGetState();

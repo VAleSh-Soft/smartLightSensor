@@ -26,15 +26,18 @@ void setup()
   pinMode(IGNITION_PIN, INPUT);
   pinMode(ENGINE_RUN_PIN, INPUT);
   pinMode(RELAY_FOR_LB_PIN, OUTPUT);
+  digitalWrite(RELAY_FOR_LB_PIN, !CONTROL_LEVEL_FOR_LB);
   pinMode(RELAY_FOR_PL_PIN, OUTPUT);
+  digitalWrite(RELAY_FOR_PL_PIN, !CONTROL_LEVEL_FOR_PL);
 #if USE_RELAY_FOR_DRL
   pinMode(RELAY_FOR_DRL_PIN, OUTPUT);
+  digitalWrite(RELAY_FOR_DRL_PIN, !CONTROL_LEVEL_FOR_DRL);
 #endif
 
   // =================================================
 
   sensor_data = analogRead(LIGHT_SENSOR_PIN);
-  http_init();
+  http_init(&HTTP);
   eeprom_init(!digitalRead(BTN_MODE_PIN)); // при зажатой при старте кнопке настройки сбрасываются к настройкам по умолчанию
   while (!digitalRead(BTN_MODE_PIN))       // ждем отпускания кнопки, если она была нажата при включении
   {

@@ -35,25 +35,27 @@ const String lb_state = "lb_state";
 
 // ===================================================
 
-void http_init()
+void http_init(WebServer *_http)
 {
-  // запрос стартовой страницы
-  HTTP.on("/", HTTP_GET, handleGetConfigPage);
-  // ответ 404
-  HTTP.onNotFound([]()
-                  { HTTP.send(404, "text/plain", F("404. Ooops!!! File not found.")); });
-  // запрос текущих настроек
-  HTTP.on("/_getconfig", HTTP_GET, handleGetConfig);
-  // запрос текущего состояния модуля
-  HTTP.on("/_getstate", HTTP_GET, handleGetState);
-  // сохранение настроек
-  HTTP.on("/_setconfig", HTTP_POST, handleSetConfig);
-  // изменение яркости светодиода
-  HTTP.on("/_ledbrightness", HTTP_POST, handleSetLedBrightness);
-  // закрытие вкладки браузера и отключение WiFi
-  HTTP.on("/_close", HTTP_GET, handleClose);
-  // обновление прошивки через Web-интерфейс
-  httpUpdater.setup(&HTTP, updateServerPage);
+  if (_http != NULL)
+  { // запрос стартовой страницы
+    _http->on("/", HTTP_GET, handleGetConfigPage);
+    // ответ 404
+    _http->onNotFound([]()
+                     { HTTP.send(404, "text/plain", F("404. Ooops!!! File not found.")); });
+    // запрос текущих настроек
+    _http->on("/_getconfig", HTTP_GET, handleGetConfig);
+    // запрос текущего состояния модуля
+    _http->on("/_getstate", HTTP_GET, handleGetState);
+    // сохранение настроек
+    _http->on("/_setconfig", HTTP_POST, handleSetConfig);
+    // изменение яркости светодиода
+    _http->on("/_ledbrightness", HTTP_POST, handleSetLedBrightness);
+    // закрытие вкладки браузера и отключение WiFi
+    _http->on("/_close", HTTP_GET, handleClose);
+    // обновление прошивки через Web-интерфейс
+    httpUpdater.setup(_http, updateServerPage);
+  }
 }
 
 void handleGetConfigPage()
