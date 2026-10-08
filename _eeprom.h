@@ -153,8 +153,10 @@ void write_string_to_eeprom(uint16_t _index, const char *_string)
   }
 }
 
-char *read_string_from_eeprom(uint16_t _index, const uint8_t _max_len)
+String read_string_from_eeprom(uint16_t _index, const uint8_t _max_len)
 {
+  String res = "";
+
   if (xSemaphoreTake(xSemaphore_eeprom, portMAX_DELAY) == pdTRUE)
   {
     uint8_t len = EEPROM.read(_index); // считываем размер строки
@@ -162,23 +164,14 @@ char *read_string_from_eeprom(uint16_t _index, const uint8_t _max_len)
     {
       len = _max_len;
     }
+    _index++; // пропускаем первый байт - там записан размер строки
 
-    char *data = (char *)calloc(len + 1, sizeof(char)); // выделяем память под строку - размер строки + нулевой символ в конце
-    if (data)
+    for (uint16_t i = 0; i < len && (_index + i) < EEPROM_SIZE; i++) // читаем строку
     {
-      _index++; // пропускаем первый байт - там записан размер строки
-
-      for (uint16_t i = 0; i < len && (_index + i) < EEPROM_SIZE; i++) // читаем строку
-      {
-        data[i] = EEPROM.read(_index + i);
-      }
-      data[len] = '\0'; // добавляем нулевой символ в конец строки
+      res += (char)EEPROM.read(_index + i);
     }
+
     xSemaphoreGive(xSemaphore_eeprom);
-    return data;
   }
-  else
-  {
-    return nullptr;
-  }
+    return res;
 }

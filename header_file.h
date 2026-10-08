@@ -175,8 +175,8 @@ WiFiModuleState getWiFiState();
 void startSleep();
 void wifiStop();
 bool getIgnitionState();
-inline char *getApSsid();
-inline char *getApPassword();
+String getApSsid();
+String getApPassword();
 void fastLedShow(CRGB _col);
 void setLedBrightness(uint8_t _br);
 void wifiModuleManagement();
@@ -209,7 +209,7 @@ void write_eeprom_16(uint16_t _index, uint16_t _data);
 uint32_t read_eeprom_32(uint16_t _index);
 void write_eeprom_32(uint16_t _index, uint32_t _data);
 void write_string_to_eeprom(uint16_t _index, const char *_string);
-char *read_string_from_eeprom(uint16_t _index, const uint8_t _max_len);
+String read_string_from_eeprom(uint16_t _index, const uint8_t _max_len);
 
 // ==== _http.h ======================================
 

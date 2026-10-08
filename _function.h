@@ -205,12 +205,12 @@ bool getIgnitionState()
   return _state;
 }
 
-inline char *getApSsid()
+inline String getApSsid()
 {
   return read_string_from_eeprom(EEPROM_INDEX_FOR_AP_SSID, MAX_AP_SSID_LENGHT);
 }
 
-inline char *getApPassword()
+inline String getApPassword()
 {
   return read_string_from_eeprom(EEPROM_INDEX_FOR_AP_PASSWORD, MAX_AP_PASSWORD_LENGHT);
 }
@@ -253,7 +253,7 @@ void wifiModuleManagement()
     WiFi.softAPConfig(IPAddress(read_eeprom_32(EEPROM_INDEX_FOR_AP_IP)),
                       IPAddress(read_eeprom_32(EEPROM_INDEX_FOR_AP_IP)),
                       IPAddress(255, 255, 255, 0));
-    if (WiFi.softAP(getApSsid(), getApPassword()))
+    if (WiFi.softAP(getApSsid().c_str(), getApPassword().c_str()))
     {
 #if LOG_ON
       SLS_PRINTLN(F("Access point start"));
