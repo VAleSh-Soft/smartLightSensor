@@ -41,8 +41,8 @@ void http_init(WebServer *_http)
   { // запрос стартовой страницы
     _http->on("/", HTTP_GET, handleGetConfigPage);
     // ответ 404
-    _http->onNotFound([]()
-                     { HTTP.send(404, "text/plain", F("404. Ooops!!! File not found.")); });
+    _http->onNotFound([_http]()
+                     { _http->send(404, "text/plain", F("404. Ooops!!! File not found.")); });
     // запрос текущих настроек
     _http->on("/_getconfig", HTTP_GET, handleGetConfig);
     // запрос текущего состояния модуля
